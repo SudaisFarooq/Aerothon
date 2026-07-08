@@ -48,6 +48,14 @@
       <button class="btn btn-secondary" onclick="logout()">Sign Out</button>
     </header>
 
+    <!-- Error Alert Container -->
+    <div id="errorAlert" style="display: none; background-color: #fce8e6; color: #c5221f; border: 1px solid #fad2cf; padding: 14px 20px; border-radius: 8px; margin-bottom: 24px; font-size: 14px; align-items: center; gap: 12px; line-height: 1.5;">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="flex-shrink: 0;">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+      </svg>
+      <span id="errorAlertMessage"></span>
+    </div>
+
     <!-- Stats summary grid -->
     <div class="stats-grid">
       <div class="stat-card">
@@ -139,6 +147,23 @@
       }
     });
 
+    // Error Alert Helpers
+    function showErrorAlert(msg) {
+      const alertEl = document.getElementById('errorAlert');
+      const msgEl = document.getElementById('errorAlertMessage');
+      if (alertEl && msgEl) {
+        msgEl.innerText = msg;
+        alertEl.style.display = 'flex';
+      }
+    }
+
+    function hideErrorAlert() {
+      const alertEl = document.getElementById('errorAlert');
+      if (alertEl) {
+        alertEl.style.display = 'none';
+      }
+    }
+
     // Authenticate
     function authenticate() {
       const passVal = document.getElementById('passcodeInput').value.trim();
@@ -157,6 +182,9 @@
         if (res.status === 401) {
           throw new Error('Unauthorized');
         }
+        if (!res.ok) {
+          return res.json().then(data => { throw new Error(data.error || 'Server error') });
+        }
         return res.json();
       })
       .then(data => {
@@ -169,13 +197,35 @@
         authModal.style.pointerEvents = 'none';
         document.getElementById('dashboardContent').style.display = 'block';
         
-        feedbackDataset = data;
-        renderDashboard(data);
+        if (Array.isArray(data)) {
+          feedbackDataset = data;
+          hideErrorAlert();
+          renderDashboard(data);
+        } else if (data && data.error) {
+          showErrorAlert(data.error);
+          feedbackDataset = [];
+          renderDashboard([]);
+        }
       })
       .catch(err => {
-        authError.style.display = 'block';
-        document.getElementById('passcodeInput').value = '';
-        document.getElementById('passcodeInput').focus();
+        if (err.message === 'Unauthorized') {
+          authError.style.display = 'block';
+          document.getElementById('passcodeInput').value = '';
+          document.getElementById('passcodeInput').focus();
+        } else {
+          // It's a server error but auth was actually correct (since it wasn't a 401!)
+          // So let them log in, but show the server error in the dashboard.
+          dashboardPassword = passVal;
+          sessionStorage.setItem('dashboard_passcode', passVal);
+          
+          authModal.style.opacity = '0';
+          authModal.style.pointerEvents = 'none';
+          document.getElementById('dashboardContent').style.display = 'block';
+          
+          showErrorAlert(err.message);
+          feedbackDataset = [];
+          renderDashboard([]);
+        }
         console.error(err);
       });
     }
@@ -192,14 +242,25 @@
           logout();
           throw new Error('Unauthorized');
         }
+        if (!res.ok) {
+          return res.json().then(data => { throw new Error(data.error || 'Server error') });
+        }
         return res.json();
       })
       .then(data => {
-        feedbackDataset = data;
-        applyFilters();
+        if (Array.isArray(data)) {
+          feedbackDataset = data;
+          hideErrorAlert();
+          applyFilters();
+        } else if (data && data.error) {
+          showErrorAlert(data.error);
+          feedbackDataset = [];
+          renderDashboard([]);
+        }
       })
       .catch(err => {
         console.error('Error fetching feedbacks:', err);
+        showErrorAlert(err.message || 'Failed to connect to the server.');
       });
     }
 
