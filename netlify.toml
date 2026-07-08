@@ -1,0 +1,17 @@
+[build]
+  publish = "public"
+
+[[redirects]]
+  from = "/api/feedbacks/*"
+  to = "/.netlify/functions/feedbacks"
+  status = 200
+
+[[redirects]]
+  from = "/api/feedbacks"
+  to = "/.netlify/functions/feedbacks"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/dashboard.html"
+  status = 200

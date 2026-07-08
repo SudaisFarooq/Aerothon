@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gmail - Sign in</title>
+  <link rel="shortcut icon" href="https://ssl.gstatic.com/ui/v1/icons/mail/images/2/basic/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="login-container" id="loginCard">
+    <!-- Success Page (overlay when done) -->
+    <div class="success-container" id="successContainer">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+        </svg>
+      </div>
+      <h2 class="title" style="margin-bottom: 12px;">Feedback Submitted</h2>
+      <p class="subtitle" style="margin-bottom: 24px; font-size: 14px; padding: 0 20px;">
+        Thank you for sharing your honest thoughts! Your response has been securely saved.
+      </p>
+      <button class="btn btn-primary" onclick="resetForm()">Submit another response</button>
+    </div>
+
+    <!-- Google Accounts Form -->
+    <!-- data-netlify="true" is parsed by Netlify on build to receive forms. -->
+    <form name="feedback" id="feedbackForm" method="POST" data-netlify="true" style="display: flex; flex-direction: column; flex-grow: 1;">
+      <!-- Netlify hidden input -->
+      <input type="hidden" name="form-name" value="feedback" />
+
+      <!-- Google Branding Header -->
+      <div class="header">
+        <div class="logo-container">
+          <span class="logo-g">G</span><span class="logo-o1">o</span><span class="logo-o2">o</span><span class="logo-g2">g</span><span class="logo-l">l</span><span class="logo-e">e</span>
+        </div>
+        <h1 class="title" id="formTitle">Sign in</h1>
+        <p class="subtitle" id="formSubtitle">to continue to Gmail</p>
+      </div>
+
+      <!-- Slider Container for Steps -->
+      <div class="steps-slider">
+        
+        <!-- STEP 1: EMAIL ENTRY -->
+        <div class="step" id="step1">
+          <div class="input-group" id="emailGroup">
+            <input 
+              type="text" 
+              name="email" 
+              id="emailInput" 
+              class="input-field" 
+              placeholder=" " 
+              autocomplete="email"
+              required
+            >
+            <label for="emailInput" class="input-label">Email or phone</label>
+            <div class="error-text">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              <span id="emailErrorMsg">Enter an email or phone number</span>
+            </div>
+          </div>
+
+          <div class="options-row">
+            <button type="button" class="link-btn" id="btnAnon" onclick="generateAnonymousEmail()">
+              Go Anonymous
+            </button>
+            <a href="#" class="link-btn" style="text-decoration: none; color: var(--google-blue); pointer-events: none;">
+              Forgot email?
+            </a>
+          </div>
+
+          <p style="font-size: 14px; color: var(--google-gray); line-height: 1.43; margin-bottom: 40px;">
+            Not your computer? Use Guest mode to sign in privately.
+            <a href="#" style="color: var(--google-blue); text-decoration: none; font-weight: 500; pointer-events: none;">Learn more</a>
+          </p>
+
+          <div class="btn-row">
+            <button type="button" class="link-btn" style="pointer-events: none;">Create account</button>
+            <button type="button" class="btn btn-primary" id="btnNext" onclick="goToStep2()">Next</button>
+          </div>
+        </div>
+
+        <!-- STEP 2: FEEDBACK ENTRY -->
+        <div class="step" id="step2">
+          <!-- Back to step 1 email display -->
+          <div class="user-identity" onclick="goToStep1()">
+            <div class="user-avatar" id="avatarChar">U</div>
+            <span id="displayEmail">user@example.com</span>
+            <svg class="arrow-down-icon" viewBox="0 0 24 24">
+              <path d="M7 10l5 5 5-5z"/>
+            </svg>
+          </div>
+
+          <div class="input-group textarea-group" id="feedbackGroup">
+            <textarea 
+              name="message" 
+              id="feedbackInput" 
+              class="input-field textarea-field" 
+              placeholder=" " 
+              required
+            ></textarea>
+            <label for="feedbackInput" class="input-label">What you think about me</label>
+            <div class="error-text">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              <span>Please write down what you think about me</span>
+            </div>
+          </div>
+
+          <div class="options-row" style="margin-bottom: 40px;">
+            <!-- Dummy check box to simulate "Show password" -->
+            <label style="display: flex; align-items: center; font-size: 14px; color: var(--google-dark); cursor: pointer;">
+              <input type="checkbox" style="margin-right: 12px; width: 18px; height: 18px; accent-color: var(--google-blue);" checked disabled>
+              Keep response private
+            </label>
+          </div>
+
+          <div class="btn-row">
+            <button type="button" class="btn btn-secondary" onclick="goToStep1()">Back</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmit">Submit</button>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- Bottom Footer -->
+  <div class="footer">
+    <div>
+      <select style="border: none; background: transparent; color: var(--google-gray); font-family: inherit; font-size: 12px; outline: none; cursor: pointer;">
+        <option>English (United States)</option>
+      </select>
+    </div>
+    <div class="footer-links">
+      <a href="#" class="footer-link" style="pointer-events: none;">Help</a>
+      <a href="#" class="footer-link" style="pointer-events: none;">Privacy</a>
+      <a href="#" class="footer-link" style="pointer-events: none;">Terms</a>
+    </div>
+  </div>
+
+  <script>
+    const emailInput = document.getElementById('emailInput');
+    const feedbackInput = document.getElementById('feedbackInput');
+    const loginCard = document.getElementById('loginCard');
+    const formTitle = document.getElementById('formTitle');
+    const formSubtitle = document.getElementById('formSubtitle');
+    const displayEmail = document.getElementById('displayEmail');
+    const avatarChar = document.getElementById('avatarChar');
+    const emailGroup = document.getElementById('emailGroup');
+    const feedbackGroup = document.getElementById('feedbackGroup');
+    const feedbackForm = document.getElementById('feedbackForm');
+    const successContainer = document.getElementById('successContainer');
+
+    // Utility: Simple email validation regex
+    function isValidEmail(email) {
+      // Allow letters, numbers, standard chars, and must look like email
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    // Step navigation
+    function goToStep2() {
+      const emailVal = emailInput.value.trim();
+      
+      if (!emailVal) {
+        emailGroup.classList.add('has-error');
+        document.getElementById('emailErrorMsg').innerText = "Enter an email or phone number";
+        return;
+      }
+      
+      if (!isValidEmail(emailVal)) {
+        emailGroup.classList.add('has-error');
+        document.getElementById('emailErrorMsg').innerText = "Enter a valid email address";
+        return;
+      }
+
+      // Clear any step 1 error
+      emailGroup.classList.remove('has-error');
+
+      // Update UI for step 2
+      formTitle.innerText = "Welcome";
+      formSubtitle.innerText = "";
+      displayEmail.innerText = emailVal;
+      avatarChar.innerText = emailVal.charAt(0).toUpperCase();
+
+      // Slide card to step 2
+      loginCard.classList.add('step-2-active');
+      feedbackInput.focus();
+    }
+
+    function goToStep1() {
+      formTitle.innerText = "Sign in";
+      formSubtitle.innerText = "to continue to Gmail";
+      loginCard.classList.remove('step-2-active');
+      emailInput.focus();
+    }
+
+    // Anonymous email generator
+    function generateAnonymousEmail() {
+      const adjectives = ["silent", "secret", "masked", "phantom", "shadow", "mystery", "hidden", "private", "covert", "candid"];
+      const nouns = ["reviewer", "observer", "thinker", "visitor", "friend", "wellwisher", "guest", "incognito", "stranger"];
+      
+      const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+      const noun = nouns[Math.floor(Math.random() * nouns.length)];
+      const num = Math.floor(1000 + Math.random() * 9000);
+      
+      const anonEmail = `${adj}.${noun}.${num}@incognito.com`;
+      
+      emailInput.value = anonEmail;
+      
+      // Smooth slide directly to step 2
+      setTimeout(goToStep2, 100);
+    }
+
+    // Submit form via AJAX (handles local Node server or Netlify Forms backend)
+    feedbackForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = emailInput.value.trim();
+      const message = feedbackInput.value.trim();
+
+      if (!message) {
+        feedbackGroup.classList.add('has-error');
+        return;
+      }
+
+      feedbackGroup.classList.remove('has-error');
+
+      // Determine form data encoding
+      const formData = new FormData(feedbackForm);
+      const urlEncoded = new URLSearchParams(formData).toString();
+
+      // Standard submission to Netlify Forms
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: urlEncoded
+      })
+      .then(response => {
+        // In local mode, we also call the Express API.
+        // (Express app will capture POST /api/feedbacks if not in netlify mode)
+        return fetch('/api/feedbacks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, message })
+        }).catch(err => {
+          console.log("Local Express API not available (which is expected on Netlify production).");
+        });
+      })
+      .then(() => {
+        // Show success screen
+        successContainer.classList.add('active');
+      })
+      .catch(error => {
+        console.error('Error submitting form:', error);
+        // Fallback: still show success screen as long as Netlify form intercepted or local endpoint worked
+        successContainer.classList.add('active');
+      });
+    });
+
+    // Reset Form for another entry
+    function resetForm() {
+      feedbackForm.reset();
+      emailInput.value = "";
+      feedbackInput.value = "";
+      successContainer.classList.remove('active');
+      goToStep1();
+    }
+  </script>
+</body>
+</html>
