@@ -9,6 +9,15 @@ const DB_FILE = path.join(__dirname, 'database.json');
 
 // Middleware
 app.use(express.json());
+
+// Catch and handle invalid JSON format requests gracefully
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({ error: 'Invalid JSON payload format.' });
+  }
+  next();
+});
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 

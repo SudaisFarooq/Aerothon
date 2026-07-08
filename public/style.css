@@ -635,3 +635,124 @@ body {
   margin-bottom: 16px;
   display: none;
 }
+
+/* ==========================================================================
+   MOBILE & RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
+
+/* Login Card Mobile Adjustments */
+@media (max-width: 600px) {
+  body {
+    background-color: var(--card-bg);
+    justify-content: flex-start; /* Align to top to prevent keyboard overlap issues */
+  }
+
+  .login-container {
+    border: none;
+    max-width: 100%;
+    min-height: 100vh;
+    padding: 32px 24px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .header {
+    margin-top: 20px;
+    margin-bottom: 30px;
+  }
+
+  .steps-slider {
+    margin-top: 10px;
+  }
+
+  .input-group {
+    margin-bottom: 24px;
+  }
+
+  .btn-row {
+    margin-top: 32px;
+  }
+}
+
+/* Dashboard Mobile Adjustments */
+@media (max-width: 768px) {
+  .dashboard-body {
+    padding: 12px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .dashboard-header button {
+    align-self: flex-start;
+    width: 100%;
+    text-align: center;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr; /* Stack statistics vertically */
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .filter-bar > div {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 12px !important;
+  }
+
+  .search-input {
+    width: 100% !important;
+  }
+
+  .filter-select {
+    width: 100% !important;
+  }
+
+  .actions-group {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .actions-group button {
+    flex: 1;
+    font-size: 13px;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Table Horizontal Scrolling */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+  }
+
+  .feedback-table {
+    min-width: 700px; /* Keep columns wide enough to read */
+  }
+
+  .feedback-table th,
+  .feedback-table td {
+    padding: 12px 14px;
+  }
+}
+
