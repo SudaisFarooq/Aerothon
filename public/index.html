@@ -393,7 +393,7 @@
             </div>
             <div class="slider-row">
               <input type="range" id="Cycle" min="1" max="30" value="1" step="1" oninput="syncVal(this, 'val_Cycle')">
-              <input type="number" id="val_Cycle" class="num-input" min="1" max="30" value="1" onchange="syncSlider(this, 'Cycle')">
+              <input type="number" id="val_Cycle" class="num-input" min="1" max="30" value="1" step="any" onchange="syncSlider(this, 'Cycle')">
             </div>
           </div>
 
@@ -405,7 +405,7 @@
             </div>
             <div class="slider-row">
               <input type="range" id="Altitude_m" min="0" max="15000" step="50" oninput="syncVal(this, 'val_Altitude_m')">
-              <input type="number" id="val_Altitude_m" class="num-input" min="0" max="15000" onchange="syncSlider(this, 'Altitude_m')">
+              <input type="number" id="val_Altitude_m" class="num-input" min="0" max="15000" step="any" onchange="syncSlider(this, 'Altitude_m')">
             </div>
           </div>
 
@@ -417,7 +417,7 @@
             </div>
             <div class="slider-row">
               <input type="range" id="Mach" min="0" max="1.6" step="0.01" oninput="syncVal(this, 'val_Mach')">
-              <input type="number" id="val_Mach" class="num-input" min="0" max="1.6" step="0.01" onchange="syncSlider(this, 'Mach')">
+              <input type="number" id="val_Mach" class="num-input" min="0" max="1.6" step="any" onchange="syncSlider(this, 'Mach')">
             </div>
           </div>
 
@@ -429,7 +429,7 @@
             </div>
             <div class="slider-row">
               <input type="range" id="Tamb_K" min="200" max="320" step="1" oninput="syncVal(this, 'val_Tamb_K')">
-              <input type="number" id="val_Tamb_K" class="num-input" min="200" max="320" onchange="syncSlider(this, 'Tamb_K')">
+              <input type="number" id="val_Tamb_K" class="num-input" min="200" max="320" step="any" onchange="syncSlider(this, 'Tamb_K')">
             </div>
           </div>
 
@@ -441,7 +441,7 @@
             </div>
             <div class="slider-row">
               <input type="range" id="Pamb_Pa" min="10000" max="105000" step="500" oninput="syncVal(this, 'val_Pamb_Pa')">
-              <input type="number" id="val_Pamb_Pa" class="num-input" min="10000" max="105000" onchange="syncSlider(this, 'Pamb_Pa')">
+              <input type="number" id="val_Pamb_Pa" class="num-input" min="10000" max="105000" step="any" onchange="syncSlider(this, 'Pamb_Pa')">
             </div>
           </div>
 
@@ -453,7 +453,7 @@
             </div>
             <div class="slider-row">
               <input type="range" id="RPM_rev_min" min="8000" max="17000" step="100" oninput="syncVal(this, 'val_RPM_rev_min')">
-              <input type="number" id="val_RPM_rev_min" class="num-input" min="8000" max="17000" onchange="syncSlider(this, 'RPM_rev_min')">
+              <input type="number" id="val_RPM_rev_min" class="num-input" min="8000" max="17000" step="any" onchange="syncSlider(this, 'RPM_rev_min')">
             </div>
           </div>
 
@@ -465,7 +465,7 @@
             </div>
             <div class="slider-row">
               <input type="range" id="FuelFlow_kg_s" min="0.1" max="2.2" step="0.01" oninput="syncVal(this, 'val_FuelFlow_kg_s')">
-              <input type="number" id="val_FuelFlow_kg_s" class="num-input" min="0.1" max="2.2" step="0.01" onchange="syncSlider(this, 'FuelFlow_kg_s')">
+              <input type="number" id="val_FuelFlow_kg_s" class="num-input" min="0.1" max="2.2" step="any" onchange="syncSlider(this, 'FuelFlow_kg_s')">
             </div>
           </div>
 
@@ -477,7 +477,7 @@
             </div>
             <div class="slider-row">
               <input type="range" id="P2_Pa" min="50000" max="650000" step="1000" oninput="syncVal(this, 'val_P2_Pa')">
-              <input type="number" id="val_P2_Pa" class="num-input" min="50000" max="650000" onchange="syncSlider(this, 'P2_Pa')">
+              <input type="number" id="val_P2_Pa" class="num-input" min="50000" max="650000" step="any" onchange="syncSlider(this, 'P2_Pa')">
             </div>
           </div>
 
@@ -489,7 +489,7 @@
             </div>
             <div class="slider-row">
               <input type="range" id="T2_K" min="250" max="620" step="2" oninput="syncVal(this, 'val_T2_K')">
-              <input type="number" id="val_T2_K" class="num-input" min="250" max="620" onchange="syncSlider(this, 'T2_K')">
+              <input type="number" id="val_T2_K" class="num-input" min="250" max="620" step="any" onchange="syncSlider(this, 'T2_K')">
             </div>
           </div>
 
@@ -501,7 +501,7 @@
             </div>
             <div class="slider-row">
               <input type="range" id="P3_Pa" min="45000" max="620000" step="1000" oninput="syncVal(this, 'val_P3_Pa')">
-              <input type="number" id="val_P3_Pa" class="num-input" min="45000" max="620000" onchange="syncSlider(this, 'P3_Pa')">
+              <input type="number" id="val_P3_Pa" class="num-input" min="45000" max="620000" step="any" onchange="syncSlider(this, 'P3_Pa')">
             </div>
           </div>
 
@@ -513,7 +513,7 @@
             </div>
             <div class="slider-row">
               <input type="range" id="T3_K" min="500" max="2000" step="5" oninput="syncVal(this, 'val_T3_K')">
-              <input type="number" id="val_T3_K" class="num-input" min="500" max="2000" onchange="syncSlider(this, 'T3_K')">
+              <input type="number" id="val_T3_K" class="num-input" min="500" max="2000" step="any" onchange="syncSlider(this, 'T3_K')">
             </div>
           </div>
 
@@ -525,7 +525,7 @@
             </div>
             <div class="slider-row">
               <input type="range" id="P4_Pa" min="15000" max="190000" step="500" oninput="syncVal(this, 'val_P4_Pa')">
-              <input type="number" id="val_P4_Pa" class="num-input" min="15000" max="190000" onchange="syncSlider(this, 'P4_Pa')">
+              <input type="number" id="val_P4_Pa" class="num-input" min="15000" max="190000" step="any" onchange="syncSlider(this, 'P4_Pa')">
             </div>
           </div>
 
@@ -537,7 +537,7 @@
             </div>
             <div class="slider-row">
               <input type="range" id="T4_K" min="400" max="1550" step="5" oninput="syncVal(this, 'val_T4_K')">
-              <input type="number" id="val_T4_K" class="num-input" min="400" max="1550" onchange="syncSlider(this, 'T4_K')">
+              <input type="number" id="val_T4_K" class="num-input" min="400" max="1550" step="any" onchange="syncSlider(this, 'T4_K')">
             </div>
           </div>
 
@@ -697,14 +697,14 @@
 
     // Calculate thermodynamic cycle parameters using semi-perfect specific heat values
     function runClientPhysics() {
-      const Tamb = parseFloat(document.getElementById('Tamb_K').value);
-      const Pamb = parseFloat(document.getElementById('Pamb_Pa').value);
-      const T2 = parseFloat(document.getElementById('T2_K').value);
-      const P2 = parseFloat(document.getElementById('P2_Pa').value);
-      const T3 = parseFloat(document.getElementById('T3_K').value);
-      const P3 = parseFloat(document.getElementById('P3_Pa').value);
-      const T4 = parseFloat(document.getElementById('T4_K').value);
-      const P4 = parseFloat(document.getElementById('P4_Pa').value);
+      const Tamb = parseFloat(document.getElementById('val_Tamb_K').value);
+      const Pamb = parseFloat(document.getElementById('val_Pamb_Pa').value);
+      const T2 = parseFloat(document.getElementById('val_T2_K').value);
+      const P2 = parseFloat(document.getElementById('val_P2_Pa').value);
+      const T3 = parseFloat(document.getElementById('val_T3_K').value);
+      const P3 = parseFloat(document.getElementById('val_P3_Pa').value);
+      const T4 = parseFloat(document.getElementById('val_T4_K').value);
+      const P4 = parseFloat(document.getElementById('val_P4_Pa').value);
 
       // Temperature-dependent cp polynomial
       function getCp(T) {
@@ -787,7 +787,7 @@
     function triggerPrediction() {
       const inputs = [];
       inputs_keys.forEach(key => {
-        inputs.push(parseFloat(document.getElementById(key).value));
+        inputs.push(parseFloat(document.getElementById('val_' + key).value));
       });
 
       try {
