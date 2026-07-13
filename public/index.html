@@ -6,6 +6,8 @@
   <title>Aerothona — Turbojet Diagnostic Digital Twin</title>
   <!-- Import Outfit and Inter fonts for a modern, premium look -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Load client-side neural network weights -->
+  <script src="weights.js"></script>
   <style>
     :root {
       --bg: #060814;
@@ -733,24 +735,63 @@
       document.getElementById('chkTurbIsen').innerText = (eff_t * 100).toFixed(1) + "%";
     }
 
-    // Trigger post request to retrieve neural network predictions
-    async function triggerPrediction() {
-      const payload = {};
+    // Evaluate the Physics-Informed Neural Network locally inside the browser
+    function runLocalPrediction(inputs) {
+      const X_mean = scalerParams.scaler_X_mean;
+      const X_scale = scalerParams.scaler_X_scale;
+      const y_mean = scalerParams.scaler_y_mean;
+      const y_scale = scalerParams.scaler_y_scale;
+
+      // 1. Standard scale inputs
+      const scaled = [];
+      for (let i = 0; i < inputs.length; i++) {
+        scaled.push((inputs[i] - X_mean[i]) / X_scale[i]);
+      }
+
+      // Matrix-vector multiplier helper with Tanh activation choice
+      function forwardLayer(input, weights, bias, activate = true) {
+        const output = [];
+        for (let i = 0; i < bias.length; i++) {
+          let sum = bias[i];
+          for (let j = 0; j < input.length; j++) {
+            sum += input[j] * weights[i][j];
+          }
+          output.push(activate ? Math.tanh(sum) : sum);
+        }
+        return output;
+      }
+
+      // 2. Feedforward pass through the 3 hidden layer MLP structure
+      const h1 = forwardLayer(scaled, modelWeights.w1, modelWeights.b1, true);
+      const h2 = forwardLayer(h1, modelWeights.w2, modelWeights.b2, true);
+      const h3 = forwardLayer(h2, modelWeights.w3, modelWeights.b3, true);
+      const out_scaled = forwardLayer(h3, modelWeights.w4, modelWeights.b4, false);
+
+      // 3. Inverse scale outputs to retrieve physical values
+      const unscaled = [];
+      for (let i = 0; i < out_scaled.length; i++) {
+        unscaled.push(out_scaled[i] * y_scale[i] + y_mean[i]);
+      }
+
+      return {
+        CompressorHealth: unscaled[0],
+        CombustorHealth: unscaled[1],
+        TurbineHealth: unscaled[2],
+        OverallHealth: unscaled[3],
+        Thrust_N: unscaled[4],
+        TSFC_g_N_s: unscaled[5]
+      };
+    }
+
+    // Trigger local client-side prediction run
+    function triggerPrediction() {
+      const inputs = [];
       inputs_keys.forEach(key => {
-        payload[key] = parseFloat(document.getElementById(key).value);
+        inputs.push(parseFloat(document.getElementById(key).value));
       });
 
       try {
-        const response = await fetch('/api/predict', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const data = await response.json();
-        if (data.error) {
-          console.error(data.error);
-          return;
-        }
+        const data = runLocalPrediction(inputs);
 
         // Render thrust & TSFC predictions
         const thrust = data.Thrust_N;
