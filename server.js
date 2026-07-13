@@ -1,19 +1,19 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const { exec } = require('child_process');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DB_FILE = path.join(__dirname, 'database.json');
 
-// Middleware
+// Express middleware setup
 app.use(express.json());
 
-// Catch and handle invalid JSON format requests gracefully
+// Handle invalid JSON requests gracefully
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
-    return res.status(400).json({ error: 'Invalid JSON payload format.' });
+    return res.status(400).json({ error: 'Malformed JSON payload.' });
   }
   next();
 });
@@ -21,99 +21,54 @@ app.use((err, req, res, next) => {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Ensure database file exists
-if (!fs.existsSync(DB_FILE)) {
-  fs.writeFileSync(DB_FILE, JSON.stringify([], null, 2));
-}
+// Subprocess mapping to invoke PyTorch predictions
+app.post('/api/predict', (req, res) => {
+  const {
+    Cycle, Altitude_m, Mach, Tamb_K, Pamb_Pa, RPM_rev_min, 
+    FuelFlow_kg_s, P2_Pa, T2_K, P3_Pa, T3_K, P4_Pa, T4_K
+  } = req.body;
 
-// Authentication Helper
-function isAuthorized(req) {
-  const authHeader = req.headers['authorization'] || '';
-  const expectedPassword = process.env.DASHBOARD_PASSWORD || 'admin123';
-  return authHeader === expectedPassword;
-}
+  const inputs = [
+    Cycle, Altitude_m, Mach, Tamb_K, Pamb_Pa, RPM_rev_min, 
+    FuelFlow_kg_s, P2_Pa, T2_K, P3_Pa, T3_K, P4_Pa, T4_K
+  ];
 
-// API Routes
-
-// 1. Submit Feedback (POST /api/feedbacks)
-app.post('/api/feedbacks', (req, res) => {
-  const { email, message } = req.body;
-
-  if (!email || !message) {
-    return res.status(400).json({ error: 'Email and message are required.' });
+  // Verify all 13 features exist and are numeric
+  if (inputs.some(val => val === undefined || val === null || isNaN(Number(val)))) {
+    return res.status(400).json({ error: 'Missing or non-numeric telemetry inputs. 13 parameters are required.' });
   }
 
-  try {
-    const data = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-    
-    const newFeedback = {
-      id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
-      email: email.trim(),
-      message: message.trim(),
-      timestamp: new Date().toISOString()
-    };
+  // Format arguments to invoke predict.py as a separate process
+  const args = inputs.map(val => Number(val)).join(' ');
+  const cmd = `python predict.py ${args}`;
 
-    data.unshift(newFeedback); // Add to the beginning so it shows first on the dashboard
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
-
-    res.status(201).json({ success: true, feedback: newFeedback });
-  } catch (error) {
-    console.error('Error writing feedback:', error);
-    res.status(500).json({ error: 'Failed to save feedback.' });
-  }
-});
-
-// 2. Get Feedbacks (GET /api/feedbacks)
-app.get('/api/feedbacks', (req, res) => {
-  if (!isAuthorized(req)) {
-    return res.status(401).json({ error: 'Unauthorized. Invalid passcode.' });
-  }
-
-  try {
-    const data = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-    res.json(data);
-  } catch (error) {
-    console.error('Error reading feedbacks:', error);
-    res.status(500).json({ error: 'Failed to read feedback database.' });
-  }
-});
-
-// 3. Delete Feedback (DELETE /api/feedbacks/:id)
-app.delete('/api/feedbacks/:id', (req, res) => {
-  if (!isAuthorized(req)) {
-    return res.status(401).json({ error: 'Unauthorized.' });
-  }
-
-  const { id } = req.params;
-
-  try {
-    let data = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-    const initialLength = data.length;
-    data = data.filter(item => item.id !== id);
-
-    if (data.length === initialLength) {
-      return res.status(404).json({ error: 'Feedback not found.' });
+  exec(cmd, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Subprocess error: ${error}`);
+      console.error(`Stderr output: ${stderr}`);
+      return res.status(500).json({ error: 'Inference model execution failed.', details: stderr });
     }
-
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Error deleting feedback:', error);
-    res.status(500).json({ error: 'Failed to delete feedback.' });
-  }
+    
+    try {
+      // Find the JSON line in output stream
+      const lines = stdout.trim().split('\n');
+      const jsonLine = lines.find(l => l.trim().startsWith('{') && l.trim().endsWith('}'));
+      if (!jsonLine) {
+        throw new Error('No JSON predictions found in python response stream.');
+      }
+      const pred = JSON.parse(jsonLine.trim());
+      res.json(pred);
+    } catch (parseError) {
+      console.error(`Parsing error on stdout: "${stdout}"`);
+      res.status(500).json({ error: 'Failed to parse model predictions output.', details: stdout });
+    }
+  });
 });
 
-// Serve frontend for /dashboard URL
-app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
-});
-
-// Start Server
+// Launch server
 app.listen(PORT, () => {
   console.log(`==================================================`);
-  console.log(`Feedback app is running locally!`);
-  console.log(`Frontend Form: http://localhost:${PORT}`);
-  console.log(`Dashboard:     http://localhost:${PORT}/dashboard`);
-  console.log(`Default Passcode: admin123`);
+  console.log(`Aerothona Turbojet Diagnostic Digital Twin active!`);
+  console.log(`Local Access URL: http://localhost:${PORT}`);
   console.log(`==================================================`);
 });
