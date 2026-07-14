@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aerothona — Turbojet Diagnostic Digital Twin</title>
-  <!-- Import Outfit and Inter fonts for a modern, premium look -->
+  <title>HAL PS-2: Turbojet Diagnostic Digital Twin Dashboard</title>
+  <!-- Clean corporate fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Load client-side neural network weights -->
   <script src="weights.js"></script>
@@ -12,17 +12,17 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --bg: #060814;
-      --card-bg: rgba(15, 23, 42, 0.7);
-      --card-border: rgba(168, 85, 247, 0.2);
-      --primary: #A855F7;
-      --primary-hover: #9333EA;
-      --text: #F8FAFC;
-      --text-muted: #CBD5E1;
-      --success: #34D399;
-      --warning: #FBBF24;
-      --danger: #F87171;
-      --accent: #22D3EE;
+      --bg: #F1F5F9;
+      --card-bg: #FFFFFF;
+      --card-border: #E2E8F0;
+      --primary: #1E3A8A;       /* Navy Blue */
+      --primary-hover: #172554;
+      --text: #0F172A;          /* Slate Dark */
+      --text-muted: #475569;    /* Slate Gray */
+      --success: #059669;       /* Emerald */
+      --warning: #D97706;       /* Amber */
+      --danger: #DC2626;        /* Red */
+      --accent: #2563EB;        /* Primary Blue */
     }
 
     * {
@@ -33,62 +33,59 @@
 
     body {
       background-color: var(--bg);
-      /* Render a darkened overlay blended with the photorealistic turbine background */
-      background-image: linear-gradient(rgba(6, 8, 20, 0.82), rgba(6, 8, 20, 0.82)),
-                        url('airplane_turbine_bg.png');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
       color: var(--text);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
-      padding: 30px;
-    }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
+      background-color: var(--primary);
+      color: #FFFFFF;
+      padding: 15px 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 30px;
-      border-bottom: 1px solid var(--card-border);
-      padding-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
 
-    h1 {
+    .header-logo h1 {
       font-family: 'Outfit', sans-serif;
-      font-size: 28px;
+      font-size: 20px;
       font-weight: 700;
       letter-spacing: -0.5px;
     }
 
-    h1 span {
-      background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .header-logo p {
+      font-size: 11px;
+      opacity: 0.85;
+      margin-top: 2px;
     }
 
-    .tag {
-      background: rgba(168, 85, 247, 0.1);
-      border: 1px solid rgba(168, 85, 247, 0.2);
-      color: var(--primary);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
+    .header-tag {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #FFFFFF;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 11px;
       font-weight: 600;
-      font-family: 'Outfit', sans-serif;
-      box-shadow: 0 0 10px rgba(168, 85, 247, 0.1);
+      letter-spacing: 0.5px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 25px auto;
+      padding: 0 20px;
+      width: 100%;
+      flex-grow: 1;
     }
 
     .main-grid {
       display: grid;
       grid-template-columns: 1fr 1.25fr;
-      gap: 30px;
+      gap: 25px;
     }
 
     @media (max-width: 1024px) {
@@ -100,38 +97,35 @@
     .card {
       background-color: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(20px);
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .card:hover {
-      border-color: rgba(34, 211, 238, 0.3);
-      box-shadow: 0 20px 40px rgba(34, 211, 238, 0.04);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
     }
 
     .card-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 17px;
-      font-weight: 600;
-      margin-bottom: 20px;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      padding-bottom: 12px;
-      color: var(--accent);
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 8px;
+      color: var(--primary);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      text-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
     }
 
     .inputs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 15px;
     }
 
     @media (max-width: 600px) {
@@ -143,13 +137,13 @@
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .label-row {
       display: flex;
       justify-content: space-between;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
     }
 
@@ -158,33 +152,33 @@
     }
 
     .label-row span {
-      color: var(--accent);
+      color: var(--primary);
     }
 
     .slider-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     input[type="range"] {
       flex-grow: 1;
       accent-color: var(--primary);
-      height: 6px;
-      border-radius: 3px;
+      height: 4px;
+      border-radius: 2px;
       outline: none;
-      background: rgba(255,255,255,0.1);
+      background: #E2E8F0;
       cursor: pointer;
     }
 
     .num-input {
-      width: 80px;
-      background: rgba(0,0,0,0.4);
+      width: 75px;
+      background: #F8FAFC;
       border: 1px solid var(--card-border);
       color: var(--text);
-      border-radius: 6px;
-      padding: 4px 8px;
-      font-size: 12px;
+      border-radius: 4px;
+      padding: 3px 6px;
+      font-size: 11px;
       text-align: right;
       font-family: monospace;
       font-weight: 600;
@@ -192,26 +186,24 @@
 
     .submit-btn {
       grid-column: 1 / -1;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
-      color: #FFF;
+      background-color: var(--primary);
+      color: #FFFFFF;
       font-weight: 700;
       border: none;
-      padding: 14px;
-      border-radius: 10px;
+      padding: 12px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 15px;
-      transition: opacity 0.2s, transform 0.2s;
-      margin-top: 15px;
+      font-size: 14px;
+      transition: background-color 0.2s;
+      margin-top: 10px;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3);
     }
 
     .submit-btn:hover {
-      opacity: 0.95;
-      transform: translateY(-1px);
+      background-color: var(--primary-hover);
     }
 
     /* Output Results Layout */
@@ -224,37 +216,36 @@
     .performance-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 15px;
     }
 
     .metric-card {
-      background: rgba(255, 255, 255, 0.02);
+      background: #F8FAFC;
       border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 16px;
-      position: relative;
+      border-radius: 8px;
+      padding: 14px;
     }
 
     .metric-card .label {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       font-weight: 600;
     }
 
     .metric-card .value {
-      font-size: 24px;
+      font-size: 22px;
       font-family: 'Outfit', sans-serif;
       font-weight: 700;
-      color: var(--text);
+      color: var(--primary);
     }
 
     .metric-card .uq-bound {
-      font-size: 11px;
-      color: var(--accent);
-      margin-top: 6px;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
       font-weight: 500;
     }
 
@@ -262,7 +253,7 @@
     .health-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
+      gap: 12px;
     }
 
     @media (max-width: 600px) {
@@ -276,81 +267,79 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      background: rgba(255, 255, 255, 0.02);
+      background: #F8FAFC;
       border: 1px solid var(--card-border);
-      padding: 15px 10px;
-      border-radius: 12px;
+      padding: 12px 8px;
+      border-radius: 8px;
     }
 
     .gauge-svg {
-      width: 70px;
-      height: 70px;
+      width: 65px;
+      height: 65px;
       transform: rotate(-90deg);
     }
 
     .gauge-bg {
       fill: none;
-      stroke: rgba(255, 255, 255, 0.05);
-      stroke-width: 6;
+      stroke: #E2E8F0;
+      stroke-width: 5;
     }
 
     .gauge-fill {
       fill: none;
-      stroke: var(--accent);
-      stroke-width: 6;
+      stroke: var(--primary);
+      stroke-width: 5;
       stroke-dasharray: 220;
       stroke-dashoffset: 220;
-      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: stroke-dashoffset 0.6s ease-out;
     }
 
     .gauge-text {
       font-family: 'Outfit', sans-serif;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     .gauge-label {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
-      margin-top: 4px;
+      margin-top: 2px;
       font-weight: 600;
     }
 
     .gauge-uq {
-      font-size: 9px;
+      font-size: 8px;
       color: var(--text-muted);
       margin-top: 2px;
-      font-weight: 500;
     }
 
     /* Thermodynamic Consistency Section */
     .physics-card {
-      background: rgba(34, 211, 238, 0.01);
-      border: 1px solid rgba(34, 211, 238, 0.15);
-      border-radius: 12px;
-      padding: 16px;
+      background: #F8FAFC;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 15px;
     }
 
     .physics-title {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--primary);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       gap: 6px;
-      text-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
     }
 
     .physics-row {
       display: flex;
       justify-content: space-between;
-      font-size: 12px;
-      padding: 5px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      font-size: 11px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--card-border);
     }
 
     .physics-row:last-child {
@@ -359,7 +348,6 @@
 
     .physics-row span:first-child {
       color: var(--text-muted);
-      font-weight: 500;
     }
 
     .physics-row span:last-child {
@@ -369,21 +357,21 @@
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <div>
-        <h1>Aerothona — <span>Digital Twin</span></h1>
-        <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px; font-weight: 500;">Physics-Informed Neural Network Diagnostics with Temperature-Dependent calorically semi-perfect gas thermodynamics</p>
-      </div>
-      <span class="tag">HAL PS-2 Diagnostic Interface</span>
-    </header>
+  <header>
+    <div class="header-logo">
+      <h1>HAL PS-2: Turbojet Diagnostic Twin</h1>
+      <p>Physics-Informed Neural Network Diagnostics | IIT Indore-HAL Hackathon 2026</p>
+    </div>
+    <span class="header-tag">Sea-Level & Altitude Diagnostic Engine</span>
+  </header>
 
+  <div class="container">
     <div class="main-grid">
       <!-- INPUT CONTROL CARD -->
       <div class="card">
         <div class="card-title">
           <span>Engine Telemetry Controls</span>
-          <span style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Adjust inputs to run diagnostics</span>
+          <span style="font-size: 10px; color: var(--text-muted); font-weight: 400;">Adjust parameters</span>
         </div>
 
         <form id="predictForm" onsubmit="runDiagnostic(event)" class="inputs-grid">
@@ -544,9 +532,6 @@
           </div>
 
           <button type="submit" class="submit-btn">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-            </svg>
             Evaluate Digital Twin
           </button>
         </form>
@@ -561,12 +546,12 @@
             <div class="metric-card">
               <div class="label">Engine Thrust</div>
               <div class="value" id="valThrust">0 N</div>
-              <div class="uq-bound" id="uqThrust">95% CI: ± 2,895 N</div>
+              <div class="uq-bound" id="uqThrust">95% CI: +/- 2,895 N</div>
             </div>
             <div class="metric-card">
               <div class="label">TSFC</div>
               <div class="value" id="valTSFC">0.0000 g/N/s</div>
-              <div class="uq-bound" id="uqTSFC">95% CI: ± 0.0012 g/N/s</div>
+              <div class="uq-bound" id="uqTSFC">95% CI: +/- 0.0012 g/N/s</div>
             </div>
           </div>
         </div>
@@ -578,45 +563,45 @@
             <!-- Compressor -->
             <div class="gauge-wrapper">
               <svg class="gauge-svg">
-                <circle class="gauge-bg" cx="35" cy="35" r="30"></circle>
-                <circle class="gauge-fill" id="fillComp" cx="35" cy="35" r="30"></circle>
+                <circle class="gauge-bg" cx="32" cy="32" r="28"></circle>
+                <circle class="gauge-fill" id="fillComp" cx="32" cy="32" r="28" style="stroke: var(--accent);"></circle>
               </svg>
               <div class="gauge-text" id="lblComp">0.0%</div>
               <div class="gauge-label">Compressor</div>
-              <div class="gauge-uq">± 3.8% (95% CI)</div>
+              <div class="gauge-uq">+/- 3.8%</div>
             </div>
 
             <!-- Combustor -->
             <div class="gauge-wrapper">
               <svg class="gauge-svg">
-                <circle class="gauge-bg" cx="35" cy="35" r="30"></circle>
-                <circle class="gauge-fill" id="fillComb" cx="35" cy="35" r="30"></circle>
+                <circle class="gauge-bg" cx="32" cy="32" r="28"></circle>
+                <circle class="gauge-fill" id="fillComb" cx="32" cy="32" r="28" style="stroke: var(--warning);"></circle>
               </svg>
               <div class="gauge-text" id="lblComb">0.0%</div>
               <div class="gauge-label">Combustor</div>
-              <div class="gauge-uq">± 3.4% (95% CI)</div>
+              <div class="gauge-uq">+/- 3.4%</div>
             </div>
 
             <!-- Turbine -->
             <div class="gauge-wrapper">
               <svg class="gauge-svg">
-                <circle class="gauge-bg" cx="35" cy="35" r="30"></circle>
-                <circle class="gauge-fill" id="fillTurb" cx="35" cy="35" r="30"></circle>
+                <circle class="gauge-bg" cx="32" cy="32" r="28"></circle>
+                <circle class="gauge-fill" id="fillTurb" cx="32" cy="32" r="28" style="stroke: var(--danger);"></circle>
               </svg>
               <div class="gauge-text" id="lblTurb">0.0%</div>
               <div class="gauge-label">Turbine</div>
-              <div class="gauge-uq">± 4.8% (95% CI)</div>
+              <div class="gauge-uq">+/- 4.8%</div>
             </div>
 
             <!-- Overall -->
             <div class="gauge-wrapper">
               <svg class="gauge-svg">
-                <circle class="gauge-bg" cx="35" cy="35" r="30"></circle>
-                <circle class="gauge-fill" id="fillOverall" cx="35" cy="35" r="30"></circle>
+                <circle class="gauge-bg" cx="32" cy="32" r="28"></circle>
+                <circle class="gauge-fill" id="fillOverall" cx="32" cy="32" r="28" style="stroke: var(--success);"></circle>
               </svg>
               <div class="gauge-text" id="lblOverall">0.0%</div>
               <div class="gauge-label">Overall Index</div>
-              <div class="gauge-uq">± 2.2% (95% CI)</div>
+              <div class="gauge-uq">+/- 2.2%</div>
             </div>
           </div>
         </div>
@@ -632,9 +617,6 @@
         <!-- Thermodynamic Cycle Check -->
         <div class="card physics-card">
           <div class="physics-title">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-            </svg>
             Thermodynamic Consistency Checks (Calorically Semi-Perfect)
           </div>
           <div class="physics-row">
@@ -681,21 +663,18 @@
     function syncVal(slider, inputId) {
       document.getElementById(inputId).value = slider.value;
       runClientPhysics();
+      triggerPrediction();
     }
 
     // Preserve exact floats during typing, updates slider visually
     function syncSlider(num, sliderId) {
       document.getElementById(sliderId).value = num.value;
       runClientPhysics();
+      triggerPrediction();
     }
 
     // Populate coordinates for standard flight conditions
-    function loadPreset(name, btn) {
-      if (btn) {
-        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      }
-
+    function loadPreset(name) {
       const values = presets[name];
       inputs_keys.forEach((key, index) => {
         const val = values[index];
@@ -827,8 +806,8 @@
               {
                 label: 'Overall Health',
                 data: overallData,
-                borderColor: '#22D3EE',
-                backgroundColor: 'rgba(34, 211, 238, 0.05)',
+                borderColor: '#059669',
+                backgroundColor: 'rgba(5, 150, 105, 0.05)',
                 borderWidth: 2,
                 pointRadius: 0,
                 fill: true
@@ -836,7 +815,7 @@
               {
                 label: 'Compressor',
                 data: compData,
-                borderColor: '#A855F7',
+                borderColor: '#2563EB',
                 borderWidth: 1.2,
                 pointRadius: 0,
                 borderDash: [4, 4],
@@ -845,7 +824,7 @@
               {
                 label: 'Turbine',
                 data: turbData,
-                borderColor: '#F87171',
+                borderColor: '#DC2626',
                 borderWidth: 1.2,
                 pointRadius: 0,
                 borderDash: [4, 4],
@@ -858,21 +837,21 @@
             maintainAspectRatio: false,
             plugins: {
               legend: {
-                labels: { color: '#CBD5E1', font: { size: 9 } }
+                labels: { color: '#0F172A', font: { size: 9 } }
               }
             },
             scales: {
               x: {
-                grid: { color: 'rgba(255,255,255,0.03)' },
-                ticks: { color: '#CBD5E1', font: { size: 8 } },
-                title: { display: true, text: 'Degradation Cycle', color: '#CBD5E1', font: { size: 9 } }
+                grid: { color: '#E2E8F0' },
+                ticks: { color: '#475569', font: { size: 8 } },
+                title: { display: true, text: 'Degradation Cycle', color: '#475569', font: { size: 9 } }
               },
               y: {
                 min: 0,
                 max: 100,
-                grid: { color: 'rgba(255,255,255,0.03)' },
-                ticks: { color: '#CBD5E1', font: { size: 8 } },
-                title: { display: true, text: 'Health (%)', color: '#CBD5E1', font: { size: 9 } }
+                grid: { color: '#E2E8F0' },
+                ticks: { color: '#475569', font: { size: 8 } },
+                title: { display: true, text: 'Health (%)', color: '#475569', font: { size: 9 } }
               }
             }
           }
@@ -925,15 +904,6 @@
       const offset = circumference - (percentage / 100) * circumference;
       circle.style.strokeDasharray = circumference;
       circle.style.strokeDashoffset = offset;
-
-      // Color bounds mapping
-      if (percentage >= 85) {
-        circle.style.stroke = 'var(--success)';
-      } else if (percentage >= 70) {
-        circle.style.stroke = 'var(--warning)';
-      } else {
-        circle.style.stroke = 'var(--danger)';
-      }
     }
 
     function runDiagnostic(e) {
