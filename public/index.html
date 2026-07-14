@@ -15,14 +15,14 @@
       --bg: #F1F5F9;
       --card-bg: #FFFFFF;
       --card-border: #E2E8F0;
-      --primary: #1E3A8A;       /* Navy Blue */
+      --primary: #1E3A8A;       /* Deep Navy Blue from PPT Template */
       --primary-hover: #172554;
       --text: #0F172A;          /* Slate Dark */
       --text-muted: #475569;    /* Slate Gray */
-      --success: #059669;       /* Emerald */
-      --warning: #D97706;       /* Amber */
-      --danger: #DC2626;        /* Red */
-      --accent: #2563EB;        /* Primary Blue */
+      --success: #1E3A8A;       /* Styled in uniform Navy Blue */
+      --warning: #1E3A8A;
+      --danger: #1E3A8A;
+      --accent: #1E3A8A;
     }
 
     * {
@@ -50,9 +50,23 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
 
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-logo-img {
+      height: 40px;
+      background-color: #FFFFFF;
+      padding: 4px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
     .header-logo h1 {
       font-family: 'Outfit', sans-serif;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
       letter-spacing: -0.5px;
     }
@@ -60,7 +74,7 @@
     .header-logo p {
       font-size: 11px;
       opacity: 0.85;
-      margin-top: 2px;
+      margin-top: 1px;
     }
 
     .header-tag {
@@ -364,9 +378,13 @@
 <body>
 
   <header>
-    <div class="header-logo">
-      <h1>HAL PS-2: Turbojet Diagnostic Twin</h1>
-      <p>Physics-Informed Neural Network Diagnostics | IIT Indore-HAL Hackathon 2026</p>
+    <div class="header-left">
+      <img src="logo1.png" alt="HAL Logo" class="header-logo-img">
+      <img src="logo2.png" alt="IIT Indore Logo" class="header-logo-img">
+      <div class="header-logo">
+        <h1>HAL PS-2: Turbojet Diagnostic Twin</h1>
+        <p>Physics-Informed Neural Network Diagnostics | IIT Indore-HAL Hackathon 2026</p>
+      </div>
     </div>
     <span class="header-tag">Sea-Level & Altitude Diagnostic Engine</span>
   </header>
@@ -570,7 +588,7 @@
             <div class="gauge-wrapper">
               <svg class="gauge-svg">
                 <circle class="gauge-bg" cx="32" cy="32" r="28"></circle>
-                <circle class="gauge-fill" id="fillComp" cx="32" cy="32" r="28" style="stroke: var(--accent);"></circle>
+                <circle class="gauge-fill" id="fillComp" cx="32" cy="32" r="28" style="stroke: var(--primary);"></circle>
               </svg>
               <div class="gauge-text" id="lblComp">0.0%</div>
               <div class="gauge-label">Compressor</div>
@@ -581,7 +599,7 @@
             <div class="gauge-wrapper">
               <svg class="gauge-svg">
                 <circle class="gauge-bg" cx="32" cy="32" r="28"></circle>
-                <circle class="gauge-fill" id="fillComb" cx="32" cy="32" r="28" style="stroke: var(--warning);"></circle>
+                <circle class="gauge-fill" id="fillComb" cx="32" cy="32" r="28" style="stroke: var(--primary);"></circle>
               </svg>
               <div class="gauge-text" id="lblComb">0.0%</div>
               <div class="gauge-label">Combustor</div>
@@ -592,7 +610,7 @@
             <div class="gauge-wrapper">
               <svg class="gauge-svg">
                 <circle class="gauge-bg" cx="32" cy="32" r="28"></circle>
-                <circle class="gauge-fill" id="fillTurb" cx="32" cy="32" r="28" style="stroke: var(--danger);"></circle>
+                <circle class="gauge-fill" id="fillTurb" cx="32" cy="32" r="28" style="stroke: var(--primary);"></circle>
               </svg>
               <div class="gauge-text" id="lblTurb">0.0%</div>
               <div class="gauge-label">Turbine</div>
@@ -603,7 +621,7 @@
             <div class="gauge-wrapper">
               <svg class="gauge-svg">
                 <circle class="gauge-bg" cx="32" cy="32" r="28"></circle>
-                <circle class="gauge-fill" id="fillOverall" cx="32" cy="32" r="28" style="stroke: var(--success);"></circle>
+                <circle class="gauge-fill" id="fillOverall" cx="32" cy="32" r="28" style="stroke: var(--primary);"></circle>
               </svg>
               <div class="gauge-text" id="lblOverall">0.0%</div>
               <div class="gauge-label">Overall Index</div>
@@ -836,8 +854,8 @@
               {
                 label: 'Overall Health',
                 data: overallData,
-                borderColor: '#059669',
-                backgroundColor: 'rgba(5, 150, 105, 0.05)',
+                borderColor: '#1E3A8A',     /* Uniform primary Navy Blue */
+                backgroundColor: 'rgba(30, 58, 138, 0.05)',
                 borderWidth: 2,
                 pointRadius: 0,
                 fill: true
@@ -845,7 +863,7 @@
               {
                 label: 'Compressor',
                 data: compData,
-                borderColor: '#2563EB',
+                borderColor: '#64748B',     /* Neutral Slate gray for subsystems */
                 borderWidth: 1.2,
                 pointRadius: 0,
                 borderDash: [4, 4],
@@ -854,7 +872,7 @@
               {
                 label: 'Turbine',
                 data: turbData,
-                borderColor: '#DC2626',
+                borderColor: '#94A3B8',     /* Light Slate gray for subsystems */
                 borderWidth: 1.2,
                 pointRadius: 0,
                 borderDash: [4, 4],
@@ -863,7 +881,7 @@
               {
                 label: 'Selected Operating Cycle',
                 data: currentPointData,
-                borderColor: '#1E3A8A',
+                borderColor: '#172554',
                 backgroundColor: '#1E3A8A',
                 pointRadius: 6,
                 pointHoverRadius: 8,
@@ -898,6 +916,22 @@
     }
 
     // Trigger local client-side prediction run
+    // Update SVG progress ring coordinates and color mappings
+    function updateHealthGauge(id, val) {
+      const percentage = Math.min(Math.max(val * 100, 0), 100);
+      document.getElementById('lbl' + id).innerText = percentage.toFixed(1) + "%";
+      
+      const circle = document.getElementById('fill' + id);
+      const radius = circle.r.baseVal.value;
+      const circumference = 2 * Math.PI * radius;
+      const offset = circumference - (percentage / 100) * circumference;
+      circle.style.strokeDasharray = circumference;
+      circle.style.strokeDashoffset = offset;
+      
+      // Kept strictly in uniform Navy Blue as requested
+      circle.style.stroke = 'var(--primary)';
+    }
+
     function triggerPrediction() {
       const inputs = [];
       inputs_keys.forEach(key => {
@@ -929,19 +963,6 @@
       } catch (err) {
         console.error('Diagnostic evaluation request failed:', err);
       }
-    }
-
-    // Update SVG progress ring coordinates and color mappings
-    function updateHealthGauge(id, val) {
-      const percentage = Math.min(Math.max(val * 100, 0), 100);
-      document.getElementById('lbl' + id).innerText = percentage.toFixed(1) + "%";
-      
-      const circle = document.getElementById('fill' + id);
-      const radius = circle.r.baseVal.value;
-      const circumference = 2 * Math.PI * radius;
-      const offset = circumference - (percentage / 100) * circumference;
-      circle.style.strokeDasharray = circumference;
-      circle.style.strokeDashoffset = offset;
     }
 
     function runDiagnostic(e) {
