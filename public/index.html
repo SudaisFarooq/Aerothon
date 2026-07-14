@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HAL PS-2: Turbojet Diagnostic Digital Twin Dashboard</title>
+  <title>HAL PS-2: Turbojet Diagnostic Twin Dashboard</title>
   <!-- Clean corporate fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Load client-side neural network weights -->
@@ -394,7 +394,7 @@
               <span>m</span>
             </div>
             <div class="slider-row">
-              <input type="range" id="Altitude_m" min="0" max="15000" step="50" oninput="syncVal(this, 'val_Altitude_m')">
+              <input type="range" id="Altitude_m" min="0" max="15000" step="any" oninput="syncVal(this, 'val_Altitude_m')">
               <input type="number" id="val_Altitude_m" class="num-input" min="0" max="15000" step="any" onchange="syncSlider(this, 'Altitude_m')">
             </div>
           </div>
@@ -406,7 +406,7 @@
               <span>Ma</span>
             </div>
             <div class="slider-row">
-              <input type="range" id="Mach" min="0" max="1.6" step="0.01" oninput="syncVal(this, 'val_Mach')">
+              <input type="range" id="Mach" min="0" max="1.6" step="any" oninput="syncVal(this, 'val_Mach')">
               <input type="number" id="val_Mach" class="num-input" min="0" max="1.6" step="any" onchange="syncSlider(this, 'Mach')">
             </div>
           </div>
@@ -418,7 +418,7 @@
               <span>K</span>
             </div>
             <div class="slider-row">
-              <input type="range" id="Tamb_K" min="200" max="320" step="1" oninput="syncVal(this, 'val_Tamb_K')">
+              <input type="range" id="Tamb_K" min="200" max="320" step="any" oninput="syncVal(this, 'val_Tamb_K')">
               <input type="number" id="val_Tamb_K" class="num-input" min="200" max="320" step="any" onchange="syncSlider(this, 'Tamb_K')">
             </div>
           </div>
@@ -430,7 +430,7 @@
               <span>Pa</span>
             </div>
             <div class="slider-row">
-              <input type="range" id="Pamb_Pa" min="10000" max="105000" step="500" oninput="syncVal(this, 'val_Pamb_Pa')">
+              <input type="range" id="Pamb_Pa" min="10000" max="105000" step="any" oninput="syncVal(this, 'val_Pamb_Pa')">
               <input type="number" id="val_Pamb_Pa" class="num-input" min="10000" max="105000" step="any" onchange="syncSlider(this, 'Pamb_Pa')">
             </div>
           </div>
@@ -442,7 +442,7 @@
               <span>rpm</span>
             </div>
             <div class="slider-row">
-              <input type="range" id="RPM_rev_min" min="30000" max="85000" step="500" oninput="syncVal(this, 'val_RPM_rev_min')">
+              <input type="range" id="RPM_rev_min" min="30000" max="85000" step="any" oninput="syncVal(this, 'val_RPM_rev_min')">
               <input type="number" id="val_RPM_rev_min" class="num-input" min="30000" max="85000" step="any" onchange="syncSlider(this, 'RPM_rev_min')">
             </div>
           </div>
@@ -454,7 +454,7 @@
               <span>kg/s</span>
             </div>
             <div class="slider-row">
-              <input type="range" id="FuelFlow_kg_s" min="0.1" max="2.2" step="0.01" oninput="syncVal(this, 'val_FuelFlow_kg_s')">
+              <input type="range" id="FuelFlow_kg_s" min="0.1" max="2.2" step="any" oninput="syncVal(this, 'val_FuelFlow_kg_s')">
               <input type="number" id="val_FuelFlow_kg_s" class="num-input" min="0.1" max="2.2" step="any" onchange="syncSlider(this, 'FuelFlow_kg_s')">
             </div>
           </div>
@@ -466,7 +466,7 @@
               <span>Pa</span>
             </div>
             <div class="slider-row">
-              <input type="range" id="P2_Pa" min="20000" max="750000" step="1000" oninput="syncVal(this, 'val_P2_Pa')">
+              <input type="range" id="P2_Pa" min="20000" max="750000" step="any" oninput="syncVal(this, 'val_P2_Pa')">
               <input type="number" id="val_P2_Pa" class="num-input" min="20000" max="750000" step="any" onchange="syncSlider(this, 'P2_Pa')">
             </div>
           </div>
@@ -478,7 +478,7 @@
               <span>K</span>
             </div>
             <div class="slider-row">
-              <input type="range" id="T2_K" min="200" max="650" step="2" oninput="syncVal(this, 'val_T2_K')">
+              <input type="range" id="T2_K" min="200" max="650" step="any" oninput="syncVal(this, 'val_T2_K')">
               <input type="number" id="val_T2_K" class="num-input" min="200" max="650" step="any" onchange="syncSlider(this, 'T2_K')">
             </div>
           </div>
@@ -490,7 +490,7 @@
               <span>Pa</span>
             </div>
             <div class="slider-row">
-              <input type="range" id="P3_Pa" min="20000" max="700000" step="1000" oninput="syncVal(this, 'val_P3_Pa')">
+              <input type="range" id="P3_Pa" min="20000" max="700000" step="any" oninput="syncVal(this, 'val_P3_Pa')">
               <input type="number" id="val_P3_Pa" class="num-input" min="20000" max="700000" step="any" onchange="syncSlider(this, 'P3_Pa')">
             </div>
           </div>
@@ -502,7 +502,7 @@
               <span>K</span>
             </div>
             <div class="slider-row">
-              <input type="range" id="T3_K" min="500" max="6500" step="50" oninput="syncVal(this, 'val_T3_K')">
+              <input type="range" id="T3_K" min="500" max="6500" step="any" oninput="syncVal(this, 'val_T3_K')">
               <input type="number" id="val_T3_K" class="num-input" min="500" max="6500" step="any" onchange="syncSlider(this, 'T3_K')">
             </div>
           </div>
@@ -514,7 +514,7 @@
               <span>Pa</span>
             </div>
             <div class="slider-row">
-              <input type="range" id="P4_Pa" min="15000" max="500000" step="1000" oninput="syncVal(this, 'val_P4_Pa')">
+              <input type="range" id="P4_Pa" min="15000" max="500000" step="any" oninput="syncVal(this, 'val_P4_Pa')">
               <input type="number" id="val_P4_Pa" class="num-input" min="15000" max="500000" step="any" onchange="syncSlider(this, 'P4_Pa')">
             </div>
           </div>
@@ -526,7 +526,7 @@
               <span>K</span>
             </div>
             <div class="slider-row">
-              <input type="range" id="T4_K" min="400" max="6500" step="50" oninput="syncVal(this, 'val_T4_K')">
+              <input type="range" id="T4_K" min="400" max="6500" step="any" oninput="syncVal(this, 'val_T4_K')">
               <input type="number" id="val_T4_K" class="num-input" min="400" max="6500" step="any" onchange="syncSlider(this, 'T4_K')">
             </div>
           </div>
