@@ -8,6 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Load client-side neural network weights -->
   <script src="weights.js"></script>
+  <!-- Load Chart.js for degradation trend visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
       --bg: #060814;
@@ -619,6 +621,14 @@
           </div>
         </div>
 
+        <!-- Degradation Trend Chart (Chart.js) -->
+        <div class="card">
+          <div class="card-title">Real-Time Degradation Trends</div>
+          <div style="position: relative; height: 160px; width: 100%;">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+
         <!-- Thermodynamic Cycle Check -->
         <div class="card physics-card">
           <div class="physics-title">
@@ -715,7 +725,7 @@
       // 1. Compressor efficiency
       const T_comp_avg = (Tamb + T2) / 2.0;
       const cp_c = getCp(T_comp_avg);
-      const kc = 287.0 / cp_c;
+      const kc = 287.058 / cp_c;
       const T2_isen = Tamb * Math.pow(P2 / Pamb, kc);
       const eff_c = (T2_isen - Tamb) / (T2 - Tamb);
 
@@ -729,7 +739,7 @@
       // 3. Turbine efficiency
       const T_turb_avg = (T3 + T4) / 2.0;
       const cp_t = getCp(T_turb_avg);
-      const kt = 287.0 / cp_t;
+      const kt = 287.058 / cp_t;
       const T4_isen = T3 * Math.pow(P4 / P3, kt);
       const eff_t = (T3 - T4) / (T3 - T4_isen);
 
@@ -784,6 +794,92 @@
       };
     }
 
+    let trendChart = null;
+
+    // Plot Overall and Subsystem Health Degradation trends dynamically over 30 cycles
+    function updateTrendChart(baseInputs) {
+      const cycles = Array.from({length: 30}, (_, i) => i + 1);
+      const overallData = [];
+      const compData = [];
+      const turbData = [];
+
+      for (let c = 1; c <= 30; c++) {
+        const inputs_c = [...baseInputs];
+        inputs_c[0] = c; // Set cycle index to c
+        const out = runLocalPrediction(inputs_c);
+        overallData.push(out.OverallHealth * 100);
+        compData.push(out.CompressorHealth * 100);
+        turbData.push(out.TurbineHealth * 100);
+      }
+
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      if (trendChart) {
+        trendChart.data.datasets[0].data = overallData;
+        trendChart.data.datasets[1].data = compData;
+        trendChart.data.datasets[2].data = turbData;
+        trendChart.update();
+      } else {
+        trendChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: cycles,
+            datasets: [
+              {
+                label: 'Overall Health',
+                data: overallData,
+                borderColor: '#22D3EE',
+                backgroundColor: 'rgba(34, 211, 238, 0.05)',
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: true
+              },
+              {
+                label: 'Compressor',
+                data: compData,
+                borderColor: '#A855F7',
+                borderWidth: 1.2,
+                pointRadius: 0,
+                borderDash: [4, 4],
+                fill: false
+              },
+              {
+                label: 'Turbine',
+                data: turbData,
+                borderColor: '#F87171',
+                borderWidth: 1.2,
+                pointRadius: 0,
+                borderDash: [4, 4],
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: { color: '#CBD5E1', font: { size: 9 } }
+              }
+            },
+            scales: {
+              x: {
+                grid: { color: 'rgba(255,255,255,0.03)' },
+                ticks: { color: '#CBD5E1', font: { size: 8 } },
+                title: { display: true, text: 'Degradation Cycle', color: '#CBD5E1', font: { size: 9 } }
+              },
+              y: {
+                min: 0,
+                max: 100,
+                grid: { color: 'rgba(255,255,255,0.03)' },
+                ticks: { color: '#CBD5E1', font: { size: 8 } },
+                title: { display: true, text: 'Health (%)', color: '#CBD5E1', font: { size: 9 } }
+              }
+            }
+          }
+        });
+      }
+    }
+
     // Trigger local client-side prediction run
     function triggerPrediction() {
       const inputs = [];
@@ -809,6 +905,9 @@
         updateHealthGauge('Comb', data.CombustorHealth);
         updateHealthGauge('Turb', data.TurbineHealth);
         updateHealthGauge('Overall', data.OverallHealth);
+
+        // Update degradation trend chart dynamically
+        updateTrendChart(inputs);
 
       } catch (err) {
         console.error('Diagnostic evaluation request failed:', err);
