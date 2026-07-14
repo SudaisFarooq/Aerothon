@@ -215,8 +215,14 @@
 
     .performance-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      grid-template-columns: 1fr 1.25fr;
+      gap: 25px;
+    }
+
+    @media (max-width: 1024px) {
+      .performance-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .metric-card {
@@ -811,11 +817,15 @@
         prevTurb = turbVal;
       }
 
+      const currentCycle = parseInt(document.getElementById('val_Cycle').value);
+      const currentPointData = cycles.map(c => c === currentCycle ? overallData[c-1] : null);
+
       const ctx = document.getElementById('trendChart').getContext('2d');
       if (trendChart) {
         trendChart.data.datasets[0].data = overallData;
         trendChart.data.datasets[1].data = compData;
         trendChart.data.datasets[2].data = turbData;
+        trendChart.data.datasets[3].data = currentPointData;
         trendChart.update();
       } else {
         trendChart = new Chart(ctx, {
@@ -848,6 +858,16 @@
                 borderWidth: 1.2,
                 pointRadius: 0,
                 borderDash: [4, 4],
+                fill: false
+              },
+              {
+                label: 'Selected Operating Cycle',
+                data: currentPointData,
+                borderColor: '#1E3A8A',
+                backgroundColor: '#1E3A8A',
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                showLine: false,
                 fill: false
               }
             ]
