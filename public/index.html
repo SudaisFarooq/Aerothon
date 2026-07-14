@@ -782,13 +782,33 @@
       const compData = [];
       const turbData = [];
 
+      let prevOverall = 100;
+      let prevComp = 100;
+      let prevTurb = 100;
+
       for (let c = 1; c <= 30; c++) {
         const inputs_c = [...baseInputs];
         inputs_c[0] = c; // Set cycle index to c
         const out = runLocalPrediction(inputs_c);
-        overallData.push(out.OverallHealth * 100);
-        compData.push(out.CompressorHealth * 100);
-        turbData.push(out.TurbineHealth * 100);
+        
+        let overallVal = out.OverallHealth * 100;
+        let compVal = out.CompressorHealth * 100;
+        let turbVal = out.TurbineHealth * 100;
+
+        // Apply physical monotonicity correction (degradation only accumulates)
+        if (c > 1) {
+          overallVal = Math.min(overallVal, prevOverall);
+          compVal = Math.min(compVal, prevComp);
+          turbVal = Math.min(turbVal, prevTurb);
+        }
+
+        overallData.push(overallVal);
+        compData.push(compVal);
+        turbData.push(turbVal);
+
+        prevOverall = overallVal;
+        prevComp = compVal;
+        prevTurb = turbVal;
       }
 
       const ctx = document.getElementById('trendChart').getContext('2d');
